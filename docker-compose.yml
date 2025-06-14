@@ -1,0 +1,110 @@
+# version: '3.9'
+
+services:
+  n8n:
+    container_name: n8n
+    # image: n8nio/n8n
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        GITHUB_TOKEN: ${GITHUB_TOKEN}    
+    ports:
+      - "5678:5678"
+    environment:
+      # - .env
+      - N8N_BASIC_AUTH_ACTIVE=false
+      - N8N_BASIC_AUTH_USER=user
+      - N8N_BASIC_AUTH_PASSWORD=password
+      - N8N_RUNNERS_ENABLED=true
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=db
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_USER=n8n
+      - DB_POSTGRESDB_PASSWORD=n8n
+      - NODE_FUNCTION_ALLOW_EXTERNAL=axios,qs
+      - GENERIC_TIMEZONE=America/Sao_Paulo
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}     
+      - N8N_CUSTOM_EXTENSIONS=/home/node/.n8n/custom      
+
+    volumes:
+      # - ./projeto:/home/node/projeto 
+      - ./scripts:/home/node/scripts 
+      # - /home/n8n/projetos/github:/home/node/github  
+      # - n8n-node:/home/node/.n8n 
+      - ./n8n_data/_data:/home/node/.n8n
+      # erro de permissao executar comando local 
+      # sudo chown -R 1000:1000 ./n8n_data
+      # sudo chmod -R 775 ./n8n_data 
+      # sudo chown -R $USER:docker ./n8n_data
+      # chmod 600 ./n8n_data/_data/config
+      - ~/.ssh/id_rsa:/home/node/.ssh/id_rsa:ro
+      # - run_ssh.sh:/home/node/scripts/run_ssh.sh
+
+    # entrypoint: ["/home/node/scripts/run_ssh.sh"]
+
+    networks:
+      - docker-n8n-waha
+
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    container_name: n8n-db
+    # Use the official PostgreSQL image
+    # image: postgres:17
+    image: postgres:17   
+    ports:
+      - "5432:5432"     
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    networks:
+      - docker-n8n-waha      
+    environment:
+      - POSTGRES_USER=n8n
+      - POSTGRES_PASSWORD=n8n
+      - POSTGRES_DB=n8n
+    restart: unless-stopped
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: ngrok
+    entrypoint: /bin/sh
+    command: -c "ngrok config add-authtoken $NGROK_AUTHTOKEN && ngrok http n8n:5678"
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    volumes:
+      - ./ngrok-config/.config/ngrok:/home/ngrok/.config/ngrok
+    depends_on:
+      - n8n
+    networks:
+      - docker-n8n-waha 
+
+
+  redis:
+    image: redis:latest
+    container_name: redis_n8n
+    ports:
+      - 6379:6379
+    networks: 
+      - docker-n8n-waha
+
+  # python-runner:
+  #   build: ./python-runner
+  #   ports:
+  #     - 5000:5000
+
+volumes:
+  db-data:
+  n8n-projeto:
+  n8n-node:
+
+networks:
+  docker-n8n-waha:
+    external: true

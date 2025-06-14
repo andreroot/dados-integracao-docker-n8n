@@ -1,0 +1,5 @@
+.env
+scripts/*
+n8n_data/*
+db-data/
+ngrok-config/*

@@ -1,0 +1,296 @@
+{
+  "name": "WorkFlowExecuteProc",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "/execute-python",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b7e30d6c-b8ac-4ef1-9f28-528002baa01d",
+      "name": "Webhook",
+      "webhookId": "86f5b397-ef67-4f04-9903-6d76b90a1b7f"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1600,
+        300
+      ],
+      "id": "76443aca-6e66-42a4-9daf-01c86765dfcb",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0bbaf2d8-2fcf-4589-9d3d-27df0f782d87",
+              "name": "processo",
+              "value": "={{ $json.query.processo }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        140
+      ],
+      "id": "73000adb-2c22-458c-8957-d4f158cf59a1",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3d217aef-0dc8-41ad-905e-0db63ac48214",
+              "name": "stdout",
+              "value": "={{ $json.stdout }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1000,
+        200
+      ],
+      "id": "9ec3f3e1-9cb1-4103-806e-9153937fd461",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $json[\"stdout\"];\n\n// Expressão regular para capturar todas as ocorrências de DESCRICAO_STATUS\nconst matches = [...text.matchAll(/\"DESCRICAO_STATUS\"\\s*:\\s*\"([^\"]+)\"/g)];\n\n// Verifica se há ao menos duas ocorrências\nif (matches.length >= 2) {\n  return [{ descricaoStatus: matches[1][1] }];\n} else {\n  return [{ erro: \"Menos de 2 ocorrências encontradas\" }];\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1300,
+        280
+      ],
+      "id": "1703244b-908a-4cc0-9afe-4e240748233a",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.processo }}",
+                    "rightValue": "resultado",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "c0cd1873-79fd-4e9e-bedf-5180bbd7ab97"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a5409e1a-326b-40c4-a861-ae9c265c82ba",
+                    "leftValue": "={{ $json.processo }}",
+                    "rightValue": "posicao",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "99024247-682c-43a0-b756-69ef0b7b0b5d",
+                    "leftValue": "={{ $json.processo }}",
+                    "rightValue": "curva",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "380d1a5e-d788-48cb-a0ab-acadf54ea329",
+                    "leftValue": "={{ $json.processo }}",
+                    "rightValue": "atualizar_mongodb_plataforma_full",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        460,
+        220
+      ],
+      "id": "e4925930-6d7d-4366-bd63-295b0c12d092",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "command": "sh /home/node/scripts/executa_remoto.sh administrador@172.16.128.133 /home/administrador/projetos/Curva-Oficial-30min/running_scripts/run.sh"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        720,
+        300
+      ],
+      "id": "ffa19f00-1fb9-4241-933c-e4ea3bd7d2db",
+      "name": "Execute Command2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [],
+        [],
+        [
+          {
+            "node": "Execute Command2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b17e264e-535d-43e8-be10-1fe2de145689",
+  "meta": {
+    "instanceId": "8b8ea8a20c268fa29d9fd66b8c29cadad97cd9e65381a2d182b1cdf938823164"
+  },
+  "id": "difM6pNLGcbtYznQ",
+  "tags": []
+}
