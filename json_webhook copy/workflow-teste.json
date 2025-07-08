@@ -1,0 +1,54 @@
+{
+  "nodes": [
+    {
+      "id": "WebhookParams",
+      "name": "Webhook Receber Params",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [300, 300],
+      "parameters": {
+        "path": "recebe-params",
+        "httpMethod": "POST",
+        "responseMode": "lastNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "SetResposta",
+      "name": "Formatar Resposta",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [600, 300],
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "nome",
+              "value": "={{$json[\"params\"][\"nome\"]}}"
+            },
+            {
+              "name": "idade",
+              "value": "={{$json[\"params\"][\"idade\"]}}"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Receber Params": {
+      "main": [
+        [
+          {
+            "node": "Formatar Resposta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "name": "Receber Params via Body"
+}

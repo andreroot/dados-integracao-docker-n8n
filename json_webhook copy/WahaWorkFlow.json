@@ -1,0 +1,518 @@
+{
+  "name": "WahaWorkFlow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "@devlikeapro/n8n-nodes-waha.wahaTrigger",
+      "typeVersion": 202502,
+      "position": [
+        0,
+        0
+      ],
+      "id": "dafcb964-12db-4e7b-9413-43690b349da9",
+      "name": "WAHA Trigger",
+      "webhookId": "1294b59a-9220-4ced-9497-871fb3e4c202"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fe148135-5087-49df-b913-0b5a8f0e3056",
+              "name": "payload.from",
+              "value": "={{ $json.payload.from }}",
+              "type": "string"
+            },
+            {
+              "id": "0027ba3a-9660-4183-91e8-4280bf98e3c3",
+              "name": "session",
+              "value": "={{ $json.session }}",
+              "type": "string"
+            },
+            {
+              "id": "22195cea-3a83-40f7-8b59-45915c19b7b6",
+              "name": "payload.body",
+              "value": "={{ $json.payload.body }}",
+              "type": "string"
+            },
+            {
+              "id": "1030983a-c66d-415f-a86a-bf044876fbbb",
+              "name": "payload.id",
+              "value": "={{ $json.payload.id }}",
+              "type": "string"
+            },
+            {
+              "id": "2de50725-6e09-4ec5-b947-8ce3e5181e12",
+              "name": "payload.timestamp",
+              "value": "={{ $json.payload.timestamp }}",
+              "type": "string"
+            },
+            {
+              "id": "e1515342-766c-4b6f-bdba-162c7089d697",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1020,
+        0
+      ],
+      "id": "19e7b594-f6e3-4409-9de5-0d9ba8414768",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Seen",
+        "participant": "",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        1240,
+        40
+      ],
+      "id": "ce87c797-4b7a-4275-9546-8f982cc51319",
+      "name": "WAHA",
+      "retryOnFail": false
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1880,
+        60
+      ],
+      "id": "a6027b3e-2f6f-4bb7-9c49-30f108846799",
+      "name": "Wait",
+      "webhookId": "a4803f72-60f0-457f-8dd2-045849d4f3ad"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "={{ $('Edit Fields').item.json.session }}",
+        "chatId": "={{ $('Edit Fields').item.json.payload.from }}",
+        "reply_to": "={{ $('Switch1').item.json.me.id }}",
+        "text": "={{ $('HTTP Request1').item.json.descricaoStatus }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        2180,
+        80
+      ],
+      "id": "685c9d78-58c3-4187-8be7-648ced4f689c",
+      "name": "WAHA1"
+    },
+    {
+      "parameters": {
+        "url": "http://n8n:5678/webhook/ler-pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1860,
+        600
+      ],
+      "id": "d67d9f6d-70a7-4f36-b9ec-ee6b961cb7bc",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.payload.from }}",
+                    "rightValue": "5511940147165@c.us",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "a474dd4f-31f3-4a3f-ba6b-6c505a27061e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": "="
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f15ed8a4-6f7f-4514-b5c8-718fc577c9fb",
+                    "leftValue": "={{ $json.payload.from }}",
+                    "rightValue": "{{ $json.payload.from }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        420,
+        0
+      ],
+      "id": "1733f6d3-ce36-4582-b4ee-f24e321d56c7",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "={{ $('Edit Fields').item.json.session }}",
+        "chatId": "=5511961594822@c.us",
+        "text": "={{ $('HTTP Request').item.json.mensagem }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        1540,
+        600
+      ],
+      "id": "b1af4589-1f64-4a5b-99fc-d1c88f3ad7b7",
+      "name": "WAHA2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.payload.body }}",
+                    "rightValue": "Executa curva",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "9a5bf74c-9625-4327-976f-9b6d346593e4"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "6f9faf11-cd39-4c85-a93d-a0e68ce9946b",
+                    "leftValue": "={{ $json.payload.body }}",
+                    "rightValue": "Executa posição",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        760,
+        0
+      ],
+      "id": "0aa98835-88cb-4b66-9fff-b7c4f6b2d55f",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "url": "http://n8n:5678/webhook/execute-python?processo=curva",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1520,
+        40
+      ],
+      "id": "c769dc2c-f887-4109-9684-e0d6ff5fd4be",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "09d1b11b-44b5-4954-9c69-6daa6b276005",
+              "name": "payload.from",
+              "value": "={{ $json.payload.from }}",
+              "type": "string"
+            },
+            {
+              "id": "ee401266-1218-4a01-a7e4-7fe8d959058f",
+              "name": "session",
+              "value": "={{ $json.session }}",
+              "type": "string"
+            },
+            {
+              "id": "4df5c372-a3e7-45dc-986e-c6a7dee93735",
+              "name": "payload.body",
+              "value": "={{ $json.payload.body }}",
+              "type": "string"
+            },
+            {
+              "id": "347a742c-e438-4f50-aeef-2af5e871d01a",
+              "name": "payload.id",
+              "value": "={{ $json.payload.id }}",
+              "type": "string"
+            },
+            {
+              "id": "3dba2350-7b6f-4102-a861-eb822cb4f31a",
+              "name": "payload.timestamp",
+              "value": "={{ $json.payload.timestamp }}",
+              "type": "number"
+            },
+            {
+              "id": "072b773b-b340-483f-92b7-b15f0af1296a",
+              "name": "me.id",
+              "value": "={{ $json.me.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1020,
+        260
+      ],
+      "id": "dd70bd67-9086-41f9-bb3c-1077693ff9a4",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Seen",
+        "participant": "",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        1260,
+        260
+      ],
+      "id": "fa943f67-741a-44ba-b068-d16827a605a6",
+      "name": "WAHA3"
+    },
+    {
+      "parameters": {
+        "url": "http://n8n:5678/webhook/execute-python?processo=posicao",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1560,
+        260
+      ],
+      "id": "55a395ff-846c-4caa-a847-a471cc85909e",
+      "name": "HTTP Request2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "WAHA Trigger": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "WAHA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WAHA": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "WAHA1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "WAHA3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WAHA3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "973fb3db-f1a3-4736-a1a7-eae184f6a1d0",
+  "meta": {
+    "instanceId": "8b8ea8a20c268fa29d9fd66b8c29cadad97cd9e65381a2d182b1cdf938823164"
+  },
+  "id": "VIOTekjhtxo5MrPu",
+  "tags": []
+}

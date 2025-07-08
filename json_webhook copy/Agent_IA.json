@@ -1,0 +1,533 @@
+{
+  "name": "Agent IA",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "andrejagan@gmail.com",
+          "mode": "list",
+          "cachedResultName": "andrejagan@gmail.com"
+        },
+        "returnAll": true,
+        "options": {
+          "timeMin": "={{ $fromAI('after', 'The earliest datetime we want to look for events for') }}",
+          "timeMax": "={{ $fromAI('before', 'The latest datetime we want to look for events for') }}",
+          "singleEvents": true,
+          "query": "={{ $fromAI('query', 'The search query to look for in the calendar. Leave empty if no search query is needed') }}"
+        }
+      },
+      "id": "cb59c384-a120-452a-bcbb-a751f22901e1",
+      "name": "Google Calendar",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.2,
+      "position": [
+        2020,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "01f9bf40-dc4f-459a-bc3f-7cdf5d74ab32",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        760,
+        0
+      ],
+      "webhookId": "a889d2ae-2159-402f-b326-5f61e90f602e"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.protocolMessage.editedMessage.extendedTextMessage.text }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant"
+        }
+      },
+      "id": "b24216b0-398a-4ea3-a99e-fa782d3881f6",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1520,
+        40
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 👋 Welcome to n8n!\nThis example shows how to build an AI Agent that interacts with your \ncalendar.\n\n### 1. Connect your accounts\n- Claim your `free` 0 OpenAI calls in the `OpenAI model` node \n- Connect your Google account in the `Google Calendar` node credentials section\n\n### 2. Ready to test it?\nClick Chat below and start asking questions! For example you can try `What meetings do I have today?`",
+        "height": 389,
+        "width": 319,
+        "color": 6
+      },
+      "id": "4873d0c9-f03b-4061-b274-610ffde042d8",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -900,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\n\n\n\n\n\n\n\n\n\n\n\nDon't have **Google Calendar**? Simply exchange this with the **Microsoft Outlook** or other tools",
+        "height": 253,
+        "width": 226,
+        "color": 7
+      },
+      "id": "26aa885c-f19e-429f-9160-39bca1db72b0",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        20,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "7df6a191-3fe8-4815-bfce-185e76b4e10c",
+      "name": "OpenAI Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        380
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "M0fkccURpaL7OR7G",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.key.id }}"
+      },
+      "id": "1f0d1ad2-021a-4afa-ae9f-22e22d6ad8ba",
+      "name": "Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1780,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### Want to learn more?\nWant to learn more about AI and how to apply it best in n8n? Have a look at our [new tutorial series on YouTube](https://www.youtube.com/watch?v=yzvLfHb0nqE&lc).",
+        "height": 100,
+        "width": 317,
+        "color": 6
+      },
+      "id": "3e2bdcb0-b623-420b-bea1-5bee020c512a",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -900,
+        720
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "@devlikeapro/n8n-nodes-waha.wahaTrigger",
+      "typeVersion": 202502,
+      "position": [
+        -380,
+        20
+      ],
+      "id": "5911978f-eb02-47af-b072-8bd85c80ed32",
+      "name": "WAHA Trigger",
+      "webhookId": "c0edae36-810e-4653-a869-388867d03d56"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.payload.from }}",
+                    "rightValue": "5511940147165@c.us",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "7f36f460-5062-4753-ba35-c9db8e4e0486"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ec8552de-638b-4342-b198-19aebfed890d",
+                    "leftValue": "={{ $json.payload.from }}",
+                    "rightValue": "5511961594822@c.us",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "fe219653-3af3-4689-ac0d-c970dd922686",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "={{ $('Edit Fields').item.json.session }}",
+        "chatId": "={{ $('Edit Fields').item.json.payload.from }}",
+        "reply_to": "={{ $('Edit Fields').item.json.payload.from }}",
+        "text": "={{ $('AI Agent').item.json.output }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        2360,
+        120
+      ],
+      "id": "3fdd3415-c2f0-43bd-88a2-a057973d4346",
+      "name": "WAHA1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "054081cf-6f12-4e87-8100-0c0a199298a3",
+              "name": "payload.body",
+              "value": "={{ $('Switch').item.json.payload.body }}",
+              "type": "string"
+            },
+            {
+              "id": "6c252f10-df65-4c00-9c78-ea644e20952f",
+              "name": "payload.from",
+              "value": "={{ $('Switch').item.json.payload.from }}",
+              "type": "string"
+            },
+            {
+              "id": "358c82d1-51f3-4b96-9df0-63f96bf4f96b",
+              "name": "session",
+              "value": "={{ $('Switch').item.json.session }}",
+              "type": "string"
+            },
+            {
+              "id": "00ca2cc4-305f-414c-954e-d8d06929e7d5",
+              "name": "payload.id",
+              "value": "={{ $('Switch').item.json.payload.id }}",
+              "type": "string"
+            },
+            {
+              "id": "33dfa92e-3e6a-46ed-ae5b-6a755063cd7e",
+              "name": "payload.timestamp",
+              "value": "={{ $json.payload.timestamp }}",
+              "type": "number"
+            },
+            {
+              "id": "91899aee-6f30-4b7f-a38b-730ea3a332db",
+              "name": "id",
+              "value": "={{ $('Switch').item.json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        120
+      ],
+      "id": "65b36798-9b6c-4e5d-b10a-bd0c38633186",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Location",
+        "session": "={{ $('Switch').item.json.session }}",
+        "chatId": "={{ $('Switch').item.json.payload.from }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        580,
+        480
+      ],
+      "id": "12f934f2-a906-4e56-ad4c-9d3f8fc729c5",
+      "name": "WAHA"
+    },
+    {
+      "parameters": {
+        "resource": "Chats",
+        "operation": "Edit Message",
+        "session": "={{ $('Edit Fields').item.json.session }}",
+        "chatId": "={{ $('Edit Fields').item.json.payload.from }}",
+        "messageId": "={{ $('Edit Fields').item.json.payload.id }}",
+        "text": "={{ $json.payload.body }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        960,
+        260
+      ],
+      "id": "870a2949-8ced-4d05-af68-a9955087f37e",
+      "name": "WAHA2"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Start Typing",
+        "session": "={{ $('Edit Fields').item.json.session }}",
+        "chatId": "={{ $('Edit Fields').item.json.payload.from }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        1960,
+        40
+      ],
+      "id": "7c9bc4ff-27cb-47e3-b2d3-1e613ae5e497",
+      "name": "WAHA3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "778179bd-45b3-4365-907b-362e26c47f15",
+              "leftValue": "={{ $json.validado }}",
+              "rightValue": "=true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        180
+      ],
+      "id": "c8dc5910-f3b0-4a21-8ae7-18499333836e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n//for (const item of $input.all()) {\n//  item.json.myNewField = 1;\n//\n//}\n\n//return $input.all();\n \n\nconst texto = $input.first().json.payload.body || \"\";\n\nconst contemTrecho = texto.toLowerCase().includes(\"agent\");\n\nreturn [\n  {\n    json: {\n      validado: contemTrecho,\n      mensagem_original: texto\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "98dbe5a3-60e1-401e-9f22-3e19eeabb28a",
+      "name": "Code"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WAHA Trigger": {
+      "main": [
+        [],
+        [],
+        [],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "WAHA3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "WAHA2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WAHA2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WAHA3": {
+      "main": [
+        [
+          {
+            "node": "WAHA1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1a9f7923-8f88-4169-8a50-d15d15036883",
+  "meta": {
+    "instanceId": "8b8ea8a20c268fa29d9fd66b8c29cadad97cd9e65381a2d182b1cdf938823164"
+  },
+  "id": "x728LgGL8vYVdo40",
+  "tags": []
+}
