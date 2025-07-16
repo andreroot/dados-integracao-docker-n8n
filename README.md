@@ -13,12 +13,16 @@ Gerar fluxo que possam integrar mais nossos processos.
         sh /home/node/scripts/executa_remoto.sh
         recebe parametros <user@localhost> <path do script shell>
 
-    >conteudo da pasta:
+    *conteudo da pasta*
+
         - json_webhook: josn dos fluxos que podem ser importados
+    
         - javascript_code_n8n: script em js usando nos code dos fluxos
+    
         - pasta scripts, nao versionar. Faça upload via ssh
 
-    >teste
+    *teste*
+
         curl -X POST http://172.16.128.133:5678/webhook/execute-python?processo=alertas_erros_operacionais' \
         -H "Content-Type: application/json
 
@@ -34,7 +38,8 @@ Gerar fluxo que possam integrar mais nossos processos.
 
         necesário:subir pacote no N8N - @devlikeapro/n8n-nodes-waha
 
-    >teste
+    *teste*
+
         curl -X POST 'http://172.16.128.133:5678/webhook/trigger_erros_operacionais?processo=inconsistencia_resultado' \
         -H "Content-Type: application/json" \
         -d '{"chatId": "nro_valido_celular@c.us","mensagem": "Agent, essas informações sobre portifolio"}'
@@ -43,7 +48,8 @@ Gerar fluxo que possam integrar mais nossos processos.
 
 1. comandos docker: a estrutura dos docker esta baseada em docker compose
 
-    docker-compose: 
+    *docker-compose:*
+
         - serviço: n8n
         - bd: redis, postgres
         - ngrok
@@ -70,29 +76,29 @@ Gerar fluxo que possam integrar mais nossos processos.
 
 2. definir acesso do user administrador na maq remota no projeto
 
-```sudo chmod 777 /home/administrador/projetos/n8n/dados-integracao-docker-n8n/n8n_data/```
+    ```sudo chmod 777 /home/administrador/projetos/n8n/dados-integracao-docker-n8n/n8n_data/```
 
-```sudo chown -R administrador:administrador /home/administrador/projetos/n8n/dados-integracao-docker-n8n/n8n_data/```
+    ```sudo chown -R administrador:administrador /home/administrador/projetos/n8n/dados-integracao-docker-n8n/n8n_data/```
 
-```sudo chgrp administrador /home/administrador/projetos/n8n/dados-integracao-docker-n8n/n8n_data/```
+    ```sudo chgrp administrador /home/administrador/projetos/n8n/dados-integracao-docker-n8n/n8n_data/```
 
 3. copia de arquivos para maq remota
     
-    scp n8n_data/_data/* administrador@host:/home/administrador/projetos/n8n/dados-integracao-docker-n8n/n8n_data/_data
+    ```scp n8n_data/_data/* administrador@host:/home/administrador/projetos/n8n/dados-integracao-docker-n8n/n8n_data/_data```
     
 4. permissoes para docker ler/escrever no volume n8n
     
-    sudo chown -R 1000:1000 ./n8n_data
+    ```sudo chown -R 1000:1000 ./n8n_data```
 
 5. permissoes para docker ler/escrever nno volume postgres 
     
-    sudo chown -R 999:999 ./db-data
+    ```sudo chown -R 999:999 ./db-data```
 
 ### 3.Administração | Fluxos 🔔
 
 Como definir parametros de entrada para webhook
 
-[params]
+1. Params
 
     http://localhost:5678/webhook-test/39b27ed9-bf7f-4d15-b40c-d13b596b7196/recebe-params/:item/item
 
@@ -106,7 +112,7 @@ Como definir parametros de entrada para webhook
         "item":"3"
         },
 
-[query]
+2. Query
 
     http://localhost:5678/webhook-test/execute-python
 
@@ -120,7 +126,7 @@ Como definir parametros de entrada para webhook
             "processo": "curva"
         },
 
-[body]
+3. Body
 
     curl --location 'http://localhost:5678/webhook/ehub' \
     --header 'Content-Type: application/json' \
