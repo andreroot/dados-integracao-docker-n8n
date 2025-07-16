@@ -1,0 +1,41 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "path": "enviar-whatsapp",
+        "options": {}
+      },
+      "id": "Webhook",
+      "name": "Webhook WhatsApp",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300],
+      "webhookId": "whatsapp-recebe",
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "resource": "Chats",
+        "operation": "Send Message",
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.mensagem }}"
+      },
+      "id": "WAHA",
+      "name": "WAHA Enviar",
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 1,
+      "position": [500, 300],
+      "credentials": {
+        "wahaApi": {
+          "id": "SEU_ID",
+          "name": "WAHA account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook WhatsApp": {
+      "main": [[{ "node": "WAHA Enviar", "type": "main", "index": 0 }]]
+    }
+  }
+}

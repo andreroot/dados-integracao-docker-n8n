@@ -1,0 +1,327 @@
+{
+  "name": "TriggerErrosOperacionais",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "trigger_erros_operacionais",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -600,
+        -40
+      ],
+      "id": "d0eac485-73cd-42d9-807d-158c4918c709",
+      "name": "Webhook",
+      "webhookId": "68869c8a-d907-428b-af0a-417e8f2e22af"
+    },
+    {
+      "parameters": {
+        "url": "http://172.16.128.133:5678/webhook/execute-python?processo=inconsistencia_resultado",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        820,
+        -220
+      ],
+      "id": "41a8f8eb-461e-42a2-aeb3-bb69eb82cf58",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "=default",
+        "chatId": "={{ $('Webhook').item.json.body.chatId }}",
+        "text": "={{ $json.mensagemFormatada }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        1160,
+        -140
+      ],
+      "id": "648e826d-65db-490b-b4b9-e3cd35dc8836",
+      "name": "WAHA",
+      "credentials": {
+        "wahaApi": {
+          "id": "L55JVJEJsDORgA7B",
+          "name": "WAHA account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Webhook').item.json.query.processo }}",
+                    "rightValue": "inconsistencia_resultado",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "3c911516-8ce1-4d1c-a361-a5f979f15b09"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "23495b25-7639-4c32-96ef-eaa4a46cc594",
+                    "leftValue": "={{ $('Webhook').item.json.query.processo }}",
+                    "rightValue": "inconsistencia_posicao",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9ba7c2a2-06f8-4686-a16d-12bb6a8767ec",
+                    "leftValue": "={{ $('Webhook').item.json.query.processo }}",
+                    "rightValue": "insert_particularidade",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        140,
+        -80
+      ],
+      "id": "ba197c6f-3b1a-4dc0-bafe-ef49bfd85915",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "url": "http://172.16.128.133:5678/webhook/execute-python?processo=inconsistencia_posicao",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        840,
+        -40
+      ],
+      "id": "9946eb8a-1cc6-435e-bbac-7ec093934f8c",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n//for (const item of $input.all()) {\n//  item.json.myNewField = 1;\n//\n//}\n\n//return $input.all();\n \n\nconst texto =  $input.first().json.body.mensagem || \"\";\n\nconst contemTrecho = texto.toLowerCase().includes(\"agent\");\n\nreturn [\n  {\n    json: {\n      validado: contemTrecho,\n      mensagem_original: texto\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        -40
+      ],
+      "id": "a6e13fb1-8981-49ec-88a2-478acc2219d8",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f0d04d8f-3949-4f11-801c-a3e1d2fcf9b1",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -100,
+        -40
+      ],
+      "id": "ae9aea78-fac9-4034-a745-3ed392e507dc",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "url": "http://172.16.128.133:5678/webhook/execute-python?processo=insert_particularidade",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=\n{\n\n\"msg_particularidade\": \"{{ $('Webhook').item.json.body.particularidade.msg_particularidade }}\",\n\"data_particularidade\": \"{{ $('Webhook').item.json.body.particularidade.data_particularidade }}\",\n\"alerta\":\n\"{{ $('Webhook').item.json.body.particularidade.alerta }}\",\n\"boleta\": \"{{ $('Webhook').item.json.body.particularidade.boleta }}\",\n\"operador\":\"{{ $('Webhook').item.json.body.particularidade.operador }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        840,
+        200
+      ],
+      "id": "e9f057a3-1c0c-4922-a828-1e875f902c9a",
+      "name": "HTTP Request2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "WAHA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "WAHA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "WAHA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e581b46e-9118-4c8f-9cee-9779479f9c68",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8b8ea8a20c268fa29d9fd66b8c29cadad97cd9e65381a2d182b1cdf938823164"
+  },
+  "id": "VuxbRmugE9HRwaJG",
+  "tags": []
+}

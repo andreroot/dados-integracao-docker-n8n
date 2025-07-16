@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  crewai-api:
+    build: ./crewai-api
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./.env:/app/.env
+    networks:
+      - crewai_net
+
+networks:
+  crewai_net:
+    driver: bridge
