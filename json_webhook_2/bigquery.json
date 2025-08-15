@@ -1,0 +1,105 @@
+{
+  "name": "bigquery",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "=/bigquery-saldo",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0648d53c-927e-4bdb-8bf6-074c027d8fd3",
+      "name": "Webhook",
+      "webhookId": "906da2c0-4138-4cba-aa49-632756f1a575"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "projectId": {
+          "__rl": true,
+          "value": "devsamelo2",
+          "mode": "list",
+          "cachedResultName": "devsamelo2",
+          "cachedResultUrl": "https://console.cloud.google.com/bigquery?project=devsamelo2"
+        },
+        "sqlQuery": "SELECT concat('{{ $json.query.tipo }}: ',sum(valor_custo)) AS vlr_custo FROM `devsamelo2.dev_domestico.custo_2025_excel` where dt_mes_base = '2025-03-01' and tipo_custo = '{{ $json.query.tipo }}'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleBigQuery",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        0
+      ],
+      "id": "1838ac13-7801-4132-85b7-102bbf58121f",
+      "name": "Google BigQuery",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleApi": {
+          "id": "hQFjkpaKWI41LD9Y",
+          "name": "Google BigQuery account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        500,
+        0
+      ],
+      "id": "e3390051-f80e-4338-bf8c-02414609c8ec",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Google BigQuery",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google BigQuery": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ba444ccd-80ce-4408-8937-6fb0517a9864",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d8a36c5bb2b58407f27c17b542d7e91016c18b54746d00a1f212e2a2e5607e05"
+  },
+  "id": "IYWtH5lOSDPJF1t5",
+  "tags": []
+}

@@ -7,8 +7,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        GITHUB_TOKEN: ${GITHUB_TOKEN}    
+      # args:
+      #   GITHUB_TOKEN: ${GITHUB_TOKEN}    
     ports:
       - "5678:5678"
     environment:
@@ -17,7 +17,6 @@ services:
       - N8N_BASIC_AUTH_USER=user
       - N8N_BASIC_AUTH_PASSWORD=password
       - N8N_RUNNERS_ENABLED=true
-      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
       - DB_TYPE=postgresdb
       - DB_POSTGRESDB_HOST=db
       - DB_POSTGRESDB_PORT=5432
@@ -26,10 +25,7 @@ services:
       - DB_POSTGRESDB_PASSWORD=n8n
       - NODE_FUNCTION_ALLOW_EXTERNAL=axios,qs
       - GENERIC_TIMEZONE=America/Sao_Paulo
-      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}     
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true  
       - N8N_CUSTOM_EXTENSIONS=/home/node/.n8n/custom      
 
     volumes:
@@ -73,11 +69,10 @@ services:
     restart: unless-stopped
 
   ngrok:
-    image: ngrok/ngrok
+    image: ngrok/ngrok:latest
     container_name: ngrok
-    command: http --authtoken 2vls36KLZYno3gHbaO7yr82hTl6_6TBmA8hFU3bsPK79gAupy n8n:5678
-    ports:
-      - "4040:4040"      
+    entrypoint: /bin/sh
+    command: -c "ngrok config add-authtoken $NGROK_AUTHTOKEN && ngrok http n8n:5678"
     environment:
       - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
     volumes:
@@ -91,10 +86,6 @@ services:
   redis:
     image: redis:latest
     container_name: redis_n8n
-    environment:
-      - REDIS_USERNAME=myadmin
-      - REDIS_PASSWORD=12345
-      - REDIS_DISABLE_DEFAULT_USER="true"
     ports:
       - 6379:6379
     networks: 
@@ -112,4 +103,5 @@ volumes:
 
 networks:
   docker-n8n-waha:
-    external: true
+    name: docker-n8n-waha
+    driver: bridge

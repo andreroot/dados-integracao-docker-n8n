@@ -1,0 +1,207 @@
+{
+  "name": "SheetTypeCust",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "list_describe_cust",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0648d53c-927e-4bdb-8bf6-074c027d8fd3",
+      "name": "Webhook",
+      "webhookId": "906da2c0-4138-4cba-aa49-632756f1a575"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1by76kJeADccF_ZIZnTSZcGd8TPJUYMo_zg021re5RLA",
+          "mode": "list",
+          "cachedResultName": "tipo_custo_n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1by76kJeADccF_ZIZnTSZcGd8TPJUYMo_zg021re5RLA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1by76kJeADccF_ZIZnTSZcGd8TPJUYMo_zg021re5RLA/edit#gid=0"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "detectAutomatically"
+            }
+          },
+          "returnFirstMatch": false
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        280,
+        0
+      ],
+      "id": "ff821390-db0c-448f-ac2c-1703a32c00fa",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "MjQ2o5G3aKFlKxSN",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{$json[\"resultado\"]}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        860,
+        0
+      ],
+      "id": "172eb163-24cf-45dc-bb6d-b4b0dc47b35a",
+      "name": "Respond to Webhook",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        900,
+        -180
+      ],
+      "id": "727d7242-dddd-4c18-8b93-07f9a264c105",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        1180,
+        80
+      ],
+      "id": "a079f0ec-c5b3-4f6e-a3dd-1e62e1faa059"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "933c844c-c8db-483c-9d39-a26f8c400883",
+              "name": "",
+              "value": "={{ $json.type_cust }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        0
+      ],
+      "id": "f2da1ff6-5375-4704-a5e2-69f8b241b569",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lista = $input.all(); // pega a lista do nó anterior\nlet resultado = \"\";\n\nfor (let i = 0; i < lista.length; i++) {\n  const valor = Object.values(lista[i].json)[0]; // pega o valor de cada objeto\n  resultado += `${i + 1} - ${valor}\\n`;\n}\n\nreturn [{\n  json: {\n    resultado\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        160
+      ],
+      "id": "c3c28244-e4ba-41be-b175-6cfffa2681f6",
+      "name": "Code"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        []
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "77fbd2af-33da-4c78-97c6-1e3c671d13de",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d8a36c5bb2b58407f27c17b542d7e91016c18b54746d00a1f212e2a2e5607e05"
+  },
+  "id": "qfuNuTPx2tDzNduV",
+  "tags": []
+}

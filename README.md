@@ -139,3 +139,6 @@ Como definir parametros de entrada para webhook
          "nome":"teste", "mensagem": "Teste vindo do n8n", "origem": "n8n"
         }
 
+docker run -it --rm \
+  -p 4040:4040 \
+  ngrok/ngrok http --authtoken 2vls36KLZYno3gHbaO7yr82hTl6_6TBmA8hFU3bsPK79gAupy 5678

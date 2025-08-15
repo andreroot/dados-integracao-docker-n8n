@@ -1,0 +1,588 @@
+{
+  "name": "MyZap",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "@devlikeapro/n8n-nodes-waha.wahaTrigger",
+      "typeVersion": 202502,
+      "position": [
+        -320,
+        -1360
+      ],
+      "id": "cc8b02f5-f544-4ffb-b7e3-5b8d90917c39",
+      "name": "WAHA Trigger",
+      "webhookId": "91955b64-aa71-4cb5-9880-fc401d7f2229"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7bcd81d1-018d-489d-a488-a02a779fdb36",
+              "name": "session",
+              "value": "={{ $json.session }}",
+              "type": "string"
+            },
+            {
+              "id": "82e19bbd-e8be-47ef-9b84-c5d87d68d60e",
+              "name": "payload.from",
+              "value": "={{ $json.payload.from }}",
+              "type": "string"
+            },
+            {
+              "id": "7ac13e99-6500-4910-9a05-c4d3030dcbe3",
+              "name": "payload.body",
+              "value": "={{ $json.payload.body }}",
+              "type": "string"
+            },
+            {
+              "id": "30266f8d-1780-4fa0-b6bb-5ed35f1492b8",
+              "name": "payload.id",
+              "value": "={{ $json.payload.id }}",
+              "type": "string"
+            },
+            {
+              "id": "da0d18f0-481d-4d94-a788-7382151bb2ff",
+              "name": "payload.body",
+              "value": "={{ $json.payload.body }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        880,
+        -1460
+      ],
+      "id": "2d2e22f7-d6cf-464f-8acd-23d7a5ea4f7b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Seen",
+        "participant": "",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        1100,
+        -1420
+      ],
+      "id": "2b4d4d3f-d6bf-4cb7-955f-d80e206294ff",
+      "name": "WAHA",
+      "credentials": {
+        "wahaApi": {
+          "id": "UucjsExjIqaOsSlA",
+          "name": "WAHA account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1580,
+        -1460
+      ],
+      "id": "1936e5ca-0720-4418-8413-0df63aba6860",
+      "name": "Wait",
+      "webhookId": "a6d7a685-67d7-4129-aebd-17a149203a3d"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "={{ $('WAHA Trigger').item.json.session }}",
+        "chatId": "={{ $('WAHA Trigger').item.json.payload.from }}",
+        "text": "=retorno: {{ $('HTTP Request').item.json.data }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        2060,
+        -1380
+      ],
+      "id": "75e2bca8-3d7b-4a04-b6a5-3ef1d4b0ab42",
+      "name": "WAHA1",
+      "credentials": {
+        "wahaApi": {
+          "id": "UucjsExjIqaOsSlA",
+          "name": "WAHA account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('WAHA Trigger').item.json.payload.from }}",
+                    "rightValue": "=5511954941526@c.us",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "5a2dd850-6f26-44c3-8637-91eb70eb2285"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        320,
+        -1440
+      ],
+      "id": "b12a84f1-42d3-4782-a692-30adf75887cc",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.payload.body }}",
+                    "rightValue": "Listagem de custo",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    },
+                    "id": "7f586a6e-95cb-416e-9244-891584d86b38"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        540,
+        -1220
+      ],
+      "id": "41f14151-1569-46ae-a6b7-0fcb38278902",
+      "name": "Switch1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "formatDate",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        -920
+      ],
+      "id": "aabadbbe-bd72-4c56-9320-3e1b8b9a5938",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {
+        "url": "=http://host.docker.internal:5678/webhook/list_describe_cust",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1320,
+        -1400
+      ],
+      "id": "0c9a9f6d-f500-4869-be2e-51a2372dc1f8",
+      "name": "HTTP Request",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.payload.body }}",
+                    "rightValue": "Listagem de custo",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "a5fadbc4-5787-4deb-bb95-8a7fb199d826"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        540,
+        -1440
+      ],
+      "id": "3cea2314-af7c-471c-bc16-332de2b3f93f",
+      "name": "Switch2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2e28ed53-95bb-4c45-99c1-2069981a4fa6",
+              "name": "session",
+              "value": "={{ $json.session }}",
+              "type": "string"
+            },
+            {
+              "id": "cbb9cf33-9911-4bbb-a710-fa1d44187712",
+              "name": "payload.from",
+              "value": "={{ $json.payload.from }}",
+              "type": "string"
+            },
+            {
+              "id": "00517a8a-4b2e-432b-ba5d-5b68a13f3ec2",
+              "name": "payload.body",
+              "value": "={{ $json.payload.body }}",
+              "type": "string"
+            },
+            {
+              "id": "3fb1bebe-a62d-41f6-a733-8f5229a5997a",
+              "name": "payload.id",
+              "value": "={{ $json.payload.id }}",
+              "type": "string"
+            },
+            {
+              "id": "4285e87b-d4cd-4429-9da4-fa2ac56e59cf",
+              "name": "payload.body",
+              "value": "={{ $json.payload.body }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        900,
+        -1180
+      ],
+      "id": "df4e69d3-1d08-4c21-a197-e8a2ac289531",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Seen",
+        "participant": "",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        1120,
+        -1180
+      ],
+      "id": "8497ee7c-7749-4262-ac19-e640f95108f4",
+      "name": "WAHA2",
+      "credentials": {
+        "wahaApi": {
+          "id": "UucjsExjIqaOsSlA",
+          "name": "WAHA account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=http://host.docker.internal:5678/webhook/bigquery-saldo?tipo={{ $('Switch').item.json.payload.body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1340,
+        -1180
+      ],
+      "id": "5bd6107d-0b5b-4009-a8da-8e8b2a4a544f",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1560,
+        -1180
+      ],
+      "id": "eab083cc-f0e5-4b93-9a14-a36f9c8bb1f4",
+      "name": "Wait1",
+      "webhookId": "50d83fb4-08af-49fa-9824-753c734f4cea"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "={{ $('Switch1').item.json.session }}",
+        "chatId": "={{ $('Switch1').item.json.payload.from }}",
+        "text": "=Retorno: {{ $('HTTP Request1').item.json.vlr_custo }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        1780,
+        -1180
+      ],
+      "id": "e9b84858-d5f0-4d0f-921d-51a1d83b71ec",
+      "name": "WAHA3",
+      "credentials": {
+        "wahaApi": {
+          "id": "UucjsExjIqaOsSlA",
+          "name": "WAHA account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7bcd81d1-018d-489d-a488-a02a779fdb36",
+              "name": "session",
+              "value": "={{ $json.session }}",
+              "type": "string"
+            },
+            {
+              "id": "82e19bbd-e8be-47ef-9b84-c5d87d68d60e",
+              "name": "payload.from",
+              "value": "={{ $json.payload.from }}",
+              "type": "string"
+            },
+            {
+              "id": "7ac13e99-6500-4910-9a05-c4d3030dcbe3",
+              "name": "payload.body",
+              "value": "={{ $json.payload.body }}",
+              "type": "string"
+            },
+            {
+              "id": "30266f8d-1780-4fa0-b6bb-5ed35f1492b8",
+              "name": "payload.id",
+              "value": "={{ $json.payload.id }}",
+              "type": "string"
+            },
+            {
+              "id": "da0d18f0-481d-4d94-a788-7382151bb2ff",
+              "name": "payload.body",
+              "value": "={{ $json.payload.body }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ac323c18-244d-44b2-9a4d-61d588de30d3",
+      "name": "Edit Fields2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "WAHA Trigger": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "WAHA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WAHA": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "WAHA1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "WAHA2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WAHA2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "WAHA3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "8325585f-01c8-4566-8c7f-421da7cdf79d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d8a36c5bb2b58407f27c17b542d7e91016c18b54746d00a1f212e2a2e5607e05"
+  },
+  "id": "A4xrE11vWqCINZfX",
+  "tags": []
+}
