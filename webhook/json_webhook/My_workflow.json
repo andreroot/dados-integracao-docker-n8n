@@ -1,0 +1,71 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "recebe-params/:item/item",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "4d691450-705b-4e5b-896a-9977338a6fce",
+      "name": "Webhook Receber Params",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "39b27ed9-bf7f-4d15-b40c-d13b596b7196"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "nome",
+              "value": "={{$json[\"params\"][\"nome\"]}}"
+            },
+            {
+              "name": "idade",
+              "value": "={{$json[\"params\"][\"idade\"]}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "aef538e5-70e4-4252-a13a-35d2b188c341",
+      "name": "Formatar Resposta",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        300,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook Receber Params": {
+      "main": [
+        [
+          {
+            "node": "Formatar Resposta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cfefab41-d8fc-4423-835d-68a288d3473d",
+  "meta": {
+    "instanceId": "8b8ea8a20c268fa29d9fd66b8c29cadad97cd9e65381a2d182b1cdf938823164"
+  },
+  "id": "BlB24NEjQVJifDNm",
+  "tags": []
+}

@@ -1,0 +1,1126 @@
+{
+  "name": "WorkFlowService",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "service-automatic",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "764e06c0-9142-4a1b-953e-b30433333838",
+      "name": "Webhook",
+      "webhookId": "344961c1-8e00-486b-aedb-67b205a785c4"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2320,
+        200
+      ],
+      "id": "add8b555-d062-4efb-885d-6b77795d2911",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0bbaf2d8-2fcf-4589-9d3d-27df0f782d87",
+              "name": "processo",
+              "value": "={{ $json.query.service }}",
+              "type": "string"
+            },
+            {
+              "id": "0cbe8498-ecc2-4566-9f0d-266b70890dc5",
+              "name": "alerta",
+              "value": "={{ $json.query.alerta }}",
+              "type": "string"
+            },
+            {
+              "id": "fad62704-43d0-4707-b2fb-f5d36fa6c64e",
+              "name": "user",
+              "value": "={{ $json.query.user }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        140
+      ],
+      "id": "ed647968-ed29-40e9-b740-4150661202df",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3d217aef-0dc8-41ad-905e-0db63ac48214",
+              "name": "stdout",
+              "value": "={{ $json.stdout }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1220,
+        0
+      ],
+      "id": "4559bc9f-ce16-4849-be63-6a63e5d8de47",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Código para extrair JSON de um stdout de comando Docker no n8n\n// Este código assume que o stdout contém uma string JSON dentro de colchetes após a frase\nconst stdout = $json.stdout;\n\n// Encontra o JSON embutido com regex\nconst match = stdout.match(/Resultados da consulta:\\s*(\\[.*\\])/);\n\n// Se encontrou\nif (match && match[1]) {\n  const jsonString = match[1]\n    .replace(/'/g, '\"'); // troca aspas simples por aspas duplas\n\n  try {\n    // Faz o parse do JSON\n    // const codes = jsonString.match(/\"code\":\\s*\"([^\"]+)\"/);\n    // const tipos = jsonString.match(/\"tipo_erro\":\\s*\"([^\"]\n    const lista_processo = JSON.parse(jsonString);\n    //OR\n    // const tipo_erro = parsed.map(item => item.tipo_erro);\n    // const Thunders = parsed.map(item => item.Thunders);\n    // const t_erros = parsed.map(item => item.erros);\n    // const t_boletas = parsed.map(item => item.boletas);\n    \n    return [\n      {\n        json: {\n          processos: lista_processo\n        }\n      }\n    ];\n  } catch (err) {\n    return [{ json: { error: \"Erro ao fazer parse do JSON\", detalhe: err.message } }];\n  }\n} else {\n  return [{ json: { error: \"Não encontrou os dados no stdout\" } }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        0
+      ],
+      "id": "2cce1b73-6852-4050-ad31-3e441ec1c04c",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "99024247-682c-43a0-b756-69ef0b7b0b5d",
+                    "leftValue": "={{ $('Webhook').item.json.query.service }}",
+                    "rightValue": "processos_error",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "380d1a5e-d788-48cb-a0ab-acadf54ea329",
+                    "leftValue": "={{ $('Webhook').item.json.query.service }}",
+                    "rightValue": "processos_executados",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7b783f28-9853-4c67-a38e-f07d22b31284",
+                    "leftValue": "={{ $('Webhook').item.json.query.service }}",
+                    "rightValue": "alertas_erros_operacionais",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3898c7d5-eff8-4af4-bf0a-d41e97db2985",
+                    "leftValue": "={{ $('Webhook').item.json.query.service }}",
+                    "rightValue": "inconsistencia_resultado",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "268cb516-3ddd-4fb4-89ac-9e9ed65c686d",
+                    "leftValue": "={{ $('Webhook').item.json.query.service }}",
+                    "rightValue": "inconsistencia_posicao",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e649f699-5f9e-4895-97ce-25ceaaafac5e",
+                    "leftValue": "={{ $('Webhook').item.json.query.service }}",
+                    "rightValue": "insert_particularidade",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2ac46253-8f91-4bb8-a4d6-34b63293afd5",
+                    "leftValue": "={{ $('Webhook').item.json.query.service }}",
+                    "rightValue": "consulta_particularidade_user",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b38c47fd-01a1-497c-bc91-400a1d090262",
+                    "leftValue": "={{ $('Webhook').item.json.query.service }}",
+                    "rightValue": "consulta_particularidade_alerta",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        460,
+        220
+      ],
+      "id": "da25dab6-978c-43dc-9f10-d0f7b5da0e6a",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "command": "sh /home/node/scripts/executa_remoto.sh administrador@172.16.128.133 /home/administrador/projetos/dados-agent-ia/script_process_monitoria/shell_script/run_workflow_n8n_athena_execution.sh"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        940,
+        160
+      ],
+      "id": "fbde7f38-ddf9-4ded-a871-9ea157da317e",
+      "name": "Execute Command2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n//for (const item of $input.all()) {\n//  item.json.myNewField = 1;\n//}\n\n//return $input.all();\n\nconst resumoProcessos = $input.first().json.processos;\n\n// const regex = /sql-server\\/extract_(\\w+)/g;\nconst processosD1 = resumoProcessos.filter(item =>\n  /sql-server\\/extract_/.test(item.processo)\n);\n\nconst resumosql = processosD1\n  .map((item, index) => `${index + 1}. *${item.processo}*\\n\\n${item.data} | Total de linhas: ${item.linhas}`)\n  .join('\\n\\n');\n\n\n// const resumo_processo_sql = [...resumo_processos.matchAll(regex)];\n\n// const regex = /sql-server\\/extract_(\\w+)/g;\nconst processosD0 = resumoProcessos.filter(item =>\n  /sql-server\\/exec_|poc_|operation_/.test(item.processo)\n);\n\nconst resumo = processosD0\n  // .filter((item, index) => /sql-server\\/extract_/.test(item.processo)\n  .map((item, index) => `${index + 1}. *${item.processo}*\\n\\n${item.data} | Total de linhas: ${item.linhas}`)\n  .join('\\n\\n');\n\n\nconst total = resumoProcessos.length;\n\nconst mensagem = `📝 *Processos consultados*\n\nTotal de processos consultados: *${total}*\n\n*🌚 Resumo dos processos executados na noite anterior:*\n${resumosql}\n\n*🌓 Resumo dos processos executados na madrugada:*\n${resumo}\n\nconsulta finalizada, ☕ \n`;\n\nreturn [\n  {\n    json: {\n      mensagemFormatada: mensagem\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1800,
+        140
+      ],
+      "id": "4d294d6e-63fe-48c4-8fc5-63dd390dd922",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "command": "sh /home/node/scripts/executa_remoto.sh administrador@172.16.128.133 /home/administrador/projetos/dados-agent-ia/script_process_monitoria/shell_script/run_workflow_n8n_athena_error.sh"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        940,
+        0
+      ],
+      "id": "c0b2b245-c3f6-4c4c-b8c2-63cee34a8057",
+      "name": "Execute Command"
+    },
+    {
+      "parameters": {
+        "command": "sh /home/node/scripts/executa_remoto.sh administrador@172.16.128.133 /home/administrador/projetos/dados-agent-ia/script_process_monitoria/shell_script/run_workflow_n8n_sqlserver_alertas_erros_operacionais.sh"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        940,
+        300
+      ],
+      "id": "c039a087-223b-4cfa-9ca8-f8e515f0cf89",
+      "name": "Execute Command1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5f6e63c5-a04a-438d-8a56-d46537048a7f",
+              "name": "stdout",
+              "value": "={{ $json.stdout }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1240,
+        300
+      ],
+      "id": "1c5f8910-55df-4f4f-8699-c55c0d72a57c",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Código para extrair JSON de um stdout de comando Docker no n8n\n// Este código assume que o stdout contém uma string JSON dentro de colchetes após a frase\nconst stdout = $json.stdout;\n\n// Encontra o JSON embutido com regex\nconst match = stdout.match(/Resultados da operação:\\s*(\\[.*\\])/);\n\n// Se encontrou\nif (match && match[1]) {\n  const jsonString = match[1]\n    .replace(/'/g, '\"'); // troca aspas simples por aspas duplas\n\n  try {\n    // Faz o parse do JSON\n    // const codes = jsonString.match(/\"code\":\\s*\"([^\"]+)\"/);\n    // const tipos = jsonString.match(/\"tipo_erro\":\\s*\"([^\"]\n    const list_alerta = JSON.parse(jsonString);\n    //OR\n    // const tipo_erro = parsed.map(item => item.tipo_erro);\n    // const Thunders = parsed.map(item => item.Thunders);\n    // const t_erros = parsed.map(item => item.erros);\n    // const t_boletas = parsed.map(item => item.boletas);\n    \n    return [\n      {\n        json: {\n          alertas: list_alerta\n        }\n      }\n    ];\n  } catch (err) {\n    return [{ json: { error: \"Erro ao fazer parse do JSON\", detalhe: err.message } }];\n  }\n} else {\n  return [{ json: { error: \"Não encontrou os dados no stdout\" } }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1460,
+        300
+      ],
+      "id": "0f8619d6-7198-47dd-a10e-bc72f0ea552d",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n//for (const item of $input.all()) {\n//  item.json.myNewField = 1;\n//}\n\n//return $input.all();\n\nconst resumo_alertas = $input.first().json.alertas;\n\nconst SafiraListaFormatada = resumo_alertas\n  .filter(match => match.Thunders === 'Safira')\n  .map((item, index) => `${index + 1}. ${item.tipo_erro} - ${item.boletas}`)\n  .join('\\n');\n\nconst totalSafira = resumo_alertas\n  .filter(match => match.Thunders === 'Safira')\n  .reduce((soma, item) => soma + item.boletas, 0);\n\nconst ComercialListaFormatada = resumo_alertas\n  .filter(match => match.Thunders === 'Comercial')\n  .map((item, index) => `${index + 1}. ${item.tipo_erro} - ${item.boletas}`)\n  .join('\\n');\n\nconst totalComercial = resumo_alertas\n  .filter(match => match.Thunders === 'Comercial')\n  .reduce((soma, item) => soma + item.boletas, 0);\n\nconst mensagem = `📝 *Alertas com possiveis erros operacionais*\n\n🚑 Resumo dos alertas:\n\n*🚦Safira | total de boletas: ${totalSafira}*\n${SafiraListaFormatada}\n\n*🚦Comercial | total de boletas: ${totalComercial}*\n${ComercialListaFormatada}\n\n\nconsulta finalizada, bom trabalho 🏃\n`;\n\nreturn [\n  {\n    json: {\n      mensagemFormatada: mensagem\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1820,
+        300
+      ],
+      "id": "d824996f-a9c6-4912-90d9-4eb080ae3ebd",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "command": "sh /home/node/scripts/executa_remoto.sh administrador@172.16.128.133 /home/administrador/projetos/dados-agent-ia/script_process_monitoria/shell_script/run_workflow_n8n_sqlserver_alertas_erros_resultados.sh"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        920,
+        480
+      ],
+      "id": "99eaa341-1bb3-47bd-9e70-b2e52474bcb8",
+      "name": "Execute Command3"
+    },
+    {
+      "parameters": {
+        "command": "sh /home/node/scripts/executa_remoto.sh administrador@172.16.128.133 /home/administrador/projetos/dados-agent-ia/script_process_monitoria/shell_script/run_workflow_n8n_sqlserver_alertas_erros_volumes.sh"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        920,
+        640
+      ],
+      "id": "c27a049a-0505-48c2-8402-f11bb1d4cc0b",
+      "name": "Execute Command4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6cafb471-8f3d-4b31-9808-3f10eebad02c",
+              "name": "stdout",
+              "value": "={{ $json.stdout }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1260,
+        500
+      ],
+      "id": "ad7b3134-22d4-4ec2-9364-2947fa31145b",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Código para extrair JSON de um stdout de comando Docker no n8n\n// Este código assume que o stdout contém uma string JSON dentro de colchetes após a frase\nconst stdout = $json.stdout;\n\n// Encontra o JSON embutido com regex\nconst match = stdout.match(/Resultados da operação:\\s*(\\[.*\\])/);\n\n// Se encontrou\nif (match && match[1]) {\n  const jsonString = match[1]\n    .replace(/'/g, '\"'); // troca aspas simples por aspas duplas\n\n  try {\n    // Faz o parse do JSON\n    // const codes = jsonString.match(/\"code\":\\s*\"([^\"]+)\"/);\n    // const tipos = jsonString.match(/\"tipo_erro\":\\s*\"([^\"]\n    const list_alerta = JSON.parse(jsonString);\n    //OR\n    // const tipo_erro = parsed.map(item => item.tipo_erro);\n    // const Thunders = parsed.map(item => item.Thunders);\n    // const t_erros = parsed.map(item => item.erros);\n    // const t_boletas = parsed.map(item => item.boletas);\n    \n    return [\n      {\n        json: {\n          alertas: list_alerta\n        }\n      }\n    ];\n  } catch (err) {\n    return [{ json: { error: \"Erro ao fazer parse do JSON\", detalhe: err.message } }];\n  }\n} else {\n  return [{ json: { error: \"Não encontrou os dados no stdout\" } }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1480,
+        500
+      ],
+      "id": "49417306-7b56-40bc-9ed7-189029f7a965",
+      "name": "Code4"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n//for (const item of $input.all()) {\n//  item.json.myNewField = 1;\n//}\n\n//return $input.all();\n\nconst resumo_alertas = $input.first().json.alertas;\n\nconst InconsistenciaPosicao = resumo_alertas\n  // .filter(match => match.Thunders === 'Safira')\n  .map((item, index) => `${index + 1}. ${item.code} | ${item.posicao} )`)\n  .join('\\n');\n\nconst totalPosicao = resumo_alertas\n  // .filter(match => match.Thunders === 'Safira')\n  .reduce((soma, item) => soma + Number(item.posicao), 0);\n\nconst InconsistenciaResultado = resumo_alertas\n  // .filter(match => match.Thunders === 'Safira')\n  .map((item, index) => `${index + 1}. ${item.code} | ${item.resultado} `)\n  .join('\\n');\n\nconst totalResultado = resumo_alertas\n  .reduce((soma, item) => soma + Number(item.resultado), 0);\n\nconst mensagem = `📝 *Alertas com possiveis erros operacionais*\n\n🔔 Verificar com urgencia:\n\n*🚦Resultado | ${totalResultado}*\ndetalhes: ${InconsistenciaResultado}\n\n*🚦Posição | ${totalPosicao}*\ndetalhes: ${InconsistenciaPosicao}\n\nconsulta finalizada\n`;\n\nreturn [\n  {\n    json: {\n      mensagemFormatada: mensagem\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2120,
+        860
+      ],
+      "id": "d7163804-0b0f-45cb-92ed-a91b00b083c4",
+      "name": "Code5"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n//for (const item of $input.all()) {\n//  item.json.myNewField = 1;\n//}\n\n//return $input.all();\n\nconst resumoProcessos = $input.first().json.processos;\n\nconst resumosql = resumoProcessos\n  .map((item, index) => `${index + 1}. *${item.processo}*\\n\\n${item.data}`)\n  .join('\\n\\n');\n\nconst total = resumoProcessos.length;\n\nconst mensagem = `📝 *Processos com erros*\n\nTotal de processos com erros: *${total}*\n\n*👀 Resumo dos processos executados com erro:*\n${resumosql}\n\nobs: necessário manutenção 🔨\n\nconsulta finalizada, \n`;\n\nreturn [\n  {\n    json: {\n      mensagemFormatada: mensagem\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1800,
+        0
+      ],
+      "id": "392b6efa-3cc9-4291-9b5d-47fd48fb3b93",
+      "name": "Code6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b800966d-cd56-4548-bc9b-09b42ecc7858",
+              "name": "=stdout",
+              "value": "={{ $json.stdout }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1220,
+        140
+      ],
+      "id": "a90999b5-e84d-4abf-b99c-e30da21ffe2e",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Código para extrair JSON de um stdout de comando Docker no n8n\n// Este código assume que o stdout contém uma string JSON dentro de colchetes após a frase\nconst stdout = $json.stdout;\n\n// Encontra o JSON embutido com regex\nconst match = stdout.match(/Resultados da consulta:\\s*(\\[.*\\])/);\n\n// Se encontrou\nif (match && match[1]) {\n  const jsonString = match[1]\n    .replace(/'/g, '\"'); // troca aspas simples por aspas duplas\n\n  try {\n    // Faz o parse do JSON\n    // const codes = jsonString.match(/\"code\":\\s*\"([^\"]+)\"/);\n    // const tipos = jsonString.match(/\"tipo_erro\":\\s*\"([^\"]\n    const lista_processo = JSON.parse(jsonString);\n    //OR\n    // const tipo_erro = parsed.map(item => item.tipo_erro);\n    // const Thunders = parsed.map(item => item.Thunders);\n    // const t_erros = parsed.map(item => item.erros);\n    // const t_boletas = parsed.map(item => item.boletas);\n    \n    return [\n      {\n        json: {\n          processos: lista_processo\n        }\n      }\n    ];\n  } catch (err) {\n    return [{ json: { error: \"Erro ao fazer parse do JSON\", detalhe: err.message } }];\n  }\n} else {\n  return [{ json: { error: \"Não encontrou os dados no stdout\" } }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        140
+      ],
+      "id": "def218c8-ed25-4568-92c0-b0325e92d1b1",
+      "name": "Code7"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n//for (const item of $input.all()) {\n//  item.json.myNewField = 1;\n//}\n\n//return $input.all();\n\nconst resumo_alertas = $input.first().json.alertas;\n\nconst dadosInconsistenciaValoresVolume = resumo_alertas\n  .filter(match => match.tipo_erro === 'erros_volume')\n  .map((item, index) => `${index + 1}. ${item.DataFornecimento} | ${item.valor} )`)\n  .join('\\n');\n\nconst totalInconsistenciaVolume = resumo_alertas\n  .filter(match => match.tipo_erro === 'erros_volume')\n  .reduce((soma, item) => soma + Number(item.valor), 0);\n\nlet alertaVolume;\n\nif (totalInconsistenciaVolume > 0.5 || totalInconsistenciaVolume < -0.5) {\n    alertaVolume = '🙀 DETECTADO ERRO necessário verificar dash Alertas: erros_volume: valores estão acima de 0,5 ou abaixo de -0,5';\n  }\nelse\n  {\n    alertaVolume = '🚨 Valores dentro da margem de erro';\n  }\n\nconst mensagem = `📝 *Alertas inconsistencia na Posição*\n\n🔔 Verificar com urgencia:\n\n*🚦Posição | ${totalInconsistenciaVolume}*\ndetalhes: ${dadosInconsistenciaValoresVolume}\n\n${alertaVolume}\n\nconsulta finalizada\n`;\n\nreturn [\n  {\n    json: {\n      mensagemFormatada: mensagem\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1840,
+        620
+      ],
+      "id": "e3f32dac-2401-4ee6-9f54-9ea0e34181c1",
+      "name": "Code8"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n//for (const item of $input.all()) {\n//  item.json.myNewField = 1;\n//}\n\n//return $input.all();\n\nconst resumo_alertas = $input.first().json.alertas;\n\nconst dadosInconsistenciaValoresResultado = resumo_alertas\n  .filter(match => match.tipo_erro === 'erros_resultado')\n  .map((item, index) => `${index + 1}. ${item.DataFornecimento} | ${item.valor} )`)\n  .join('\\n');\n\nconst totalInconsistenciaResultado = resumo_alertas\n  .filter(match => match.tipo_erro === 'erros_resultado')\n  .reduce((soma, item) => soma + Number(item.valor), 0);\n\nlet alertaResultado;\n\nif (totalInconsistenciaResultado > 50000 || totalInconsistenciaResultado < -50000) {\n    alertaResultado = '🙀 DETECTADO ERRO necessário verificar dash Alertas: erros_resultado: valores estão acima de 50.000 ou abaixo de -50.000';\n  }\nelse\n  {\n    alertaResultado = '🚨 Valores dentro da margem de erro';\n  }\n\nconst mensagem = `📝 *Alertas inconsistencia no Resultado*\n\n🔔 Verificar com urgencia:\n\n*🚦Resultado | ${totalInconsistenciaResultado}*\ndetalhes: ${dadosInconsistenciaValoresResultado}\n\n${alertaResultado}\n\nconsulta finalizada\n`;\n\nreturn [\n  {\n    json: {\n      mensagemFormatada: mensagem\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1840,
+        460
+      ],
+      "id": "e7b7fe57-be93-4000-b90d-b78f416ff6f2",
+      "name": "Code9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6cafb471-8f3d-4b31-9808-3f10eebad02c",
+              "name": "stdout",
+              "value": "={{ $json.stdout }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1200,
+        640
+      ],
+      "id": "9866b624-c481-4fb3-83ad-499bba2fe0f7",
+      "name": "Edit Fields5"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Código para extrair JSON de um stdout de comando Docker no n8n\n// Este código assume que o stdout contém uma string JSON dentro de colchetes após a frase\nconst stdout = $json.stdout;\n\n// Encontra o JSON embutido com regex\nconst match = stdout.match(/Resultados da operação:\\s*(\\[.*\\])/);\n\n// Se encontrou\nif (match && match[1]) {\n  const jsonString = match[1]\n    .replace(/'/g, '\"'); // troca aspas simples por aspas duplas\n\n  try {\n    // Faz o parse do JSON\n    // const codes = jsonString.match(/\"code\":\\s*\"([^\"]+)\"/);\n    // const tipos = jsonString.match(/\"tipo_erro\":\\s*\"([^\"]\n    const list_alerta = JSON.parse(jsonString);\n    //OR\n    // const tipo_erro = parsed.map(item => item.tipo_erro);\n    // const Thunders = parsed.map(item => item.Thunders);\n    // const t_erros = parsed.map(item => item.erros);\n    // const t_boletas = parsed.map(item => item.boletas);\n    \n    return [\n      {\n        json: {\n          alertas: list_alerta\n        }\n      }\n    ];\n  } catch (err) {\n    return [{ json: { error: \"Erro ao fazer parse do JSON\", detalhe: err.message } }];\n  }\n} else {\n  return [{ json: { error: \"Não encontrou os dados no stdout\" } }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        640
+      ],
+      "id": "39456d67-9526-4bdd-a5d2-bf3644ef352f",
+      "name": "Code10"
+    },
+    {
+      "parameters": {
+        "command": "=sh /home/node/scripts/executa_remoto_params.sh administrador@172.16.128.133 /home/administrador/projetos/dados-agent-ia/script_process_monitoria/shell_script/run_workflow_n8n_insert_particularity.sh \"{{ $('Webhook').item.json.body.msg_particularidade }}\" \"{{ $('Webhook').item.json.body.data_particularidade }}\" \"{{ $('Webhook').item.json.body.alerta }}\" \"{{ $('Webhook').item.json.body.boleta }}\" \"{{ $('Webhook').item.json.body.operador }}\""
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        940,
+        840
+      ],
+      "id": "c7d7de71-5b32-4a98-a18d-16ebc30e09b4",
+      "name": "Execute Command5"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c468fbe9-c4c9-442b-814c-79ac7d8046c0",
+              "name": "stdout",
+              "value": "={{ $json.stdout }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1180,
+        840
+      ],
+      "id": "e3ad29b9-abf6-4846-a45a-6fc3e7ad44df",
+      "name": "Edit Fields6"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Código para extrair JSON de um stdout de comando Docker no n8n\n// Este código assume que o stdout contém uma string JSON dentro de colchetes após a frase\nconst stdout = $json.stdout;\n\nconst not_insert = stdout.match(/Não foi inserido dados na tabela ErrosParticularidadesBoletas_v2/);\n\n// Encontra o JSON embutido com regex\nconst match = stdout.match(/Resultados da operação:\\s*(\\[.*\\])/);\n\n// Se encontrou\nif ((not_insert==null) && (match && match[1])) {\n  const jsonString = match[1]\n    .replace(/'/g, '\"'); // troca aspas simples por aspas duplas\n\n  try {\n    // Faz o parse do JSON\n    //const codes = jsonString.match(/\"code\":\\s*\"([^\"]+)\"/);\n    // const tipos = jsonString.match(/\"tipo_erro\":\\s*\"([^\"]\n    const list_alerta = JSON.parse(jsonString);\n    //OR\n    // const tipo_erro = parsed.map(item => item.tipo_erro);\n    // const Thunders = parsed.map(item => item.Thunders);\n    // const t_erros = parsed.map(item => item.erros);\n    // const t_boletas = parsed.map(item => item.boletas);\n    \n    return [\n      {\n        json: {\n          insert_table: list_alerta\n        }\n      }\n    ];\n  } catch (err) {\n    return [{ json: { error: \"Erro ao fazer parse do JSON\", detalhe: err.message, resultado: not_insert } }];\n  }\n} else {\n  return [{ json: { resultado: not_insert } }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1460,
+        840
+      ],
+      "id": "2fc606be-aad7-4258-8845-60c878b9eea1",
+      "name": "Code11"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n//for (const item of $input.all()) {\n//  item.json.myNewField = 1;\n//}\n\n//return $input.all();\n\nif ($input.first().json.resultado==null) {\n  \nconst resumo_alertas = $input.first().json.insert_table;\n\nconst dadosParticularidade = resumo_alertas\n  .map((item, index) => `${index + 1}. Boleta: ${item.code} | Data de fornecimento: ${item.DataFornecimento} | Data de inserção: ${item.DataInsertTable})`)\n  .join('\\n');\n\nconst totalDadosInseridos = resumo_alertas.length;\n\nconst mensagem = `📝 *Inserção de Particularidade*\n\n🔔 Inserido: ${dadosParticularidade}\n\nconsulta finalizada\n`;\n\nreturn [\n  {\n    json: {\n      mensagemFormatada: mensagem\n    }\n  }\n]\n}\nelse{\n  return [\n  {\n    json: {\n      mensagemFormatada: $input.first().json.resultado\n    }\n  }\n]\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1800,
+        860
+      ],
+      "id": "68098046-f6f8-42ba-9ec3-e60d8b3aaf2a",
+      "name": "Code12"
+    },
+    {
+      "parameters": {
+        "command": "=sh /home/node/scripts/executa_remoto_params.sh administrador@172.16.128.133 /home/administrador/projetos/dados-agent-ia/script_process_monitoria/shell_script/run_workflow_n8n_consulta_particularity.sh \"User\" \"{{ $json.user }}\" \"\" \"\" \"\" \"\""
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        920,
+        1020
+      ],
+      "id": "ad75b0b5-daa6-43cb-89be-e170ac4eb85a",
+      "name": "Execute Command6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e485cf4b-30dd-477f-978b-49dfac8edf0a",
+              "name": "stdout",
+              "value": "={{ $json.stdout }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1420,
+        1040
+      ],
+      "id": "25999238-931d-4efd-8ed0-0fc1f245cee2",
+      "name": "Edit Fields7"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Código para extrair JSON de um stdout de comando Docker no n8n\n// Este código assume que o stdout contém uma string JSON dentro de colchetes após a frase\nconst stdout = $json.stdout;\n\nconst not_insert = stdout.match(/Não foi inserido dados na tabela ErrosParticularidadesBoletas_v2/);\n\n// Encontra o JSON embutido com regex\nconst match = stdout.match(/Resultados da operação:\\s*(\\[.*\\])/);\n\n// Se encontrou\nif ((not_insert==null) && (match && match[1])) {\n  const jsonString = match[1]\n    .replace(/'/g, '\"'); // troca aspas simples por aspas duplas\n\n  try {\n    // Faz o parse do JSON\n    //const codes = jsonString.match(/\"code\":\\s*\"([^\"]+)\"/);\n    // const tipos = jsonString.match(/\"tipo_erro\":\\s*\"([^\"]\n    const list_alerta = JSON.parse(jsonString);\n    //OR\n    // const tipo_erro = parsed.map(item => item.tipo_erro);\n    // const Thunders = parsed.map(item => item.Thunders);\n    // const t_erros = parsed.map(item => item.erros);\n    // const t_boletas = parsed.map(item => item.boletas);\n    \n    return [\n      {\n        json: {\n          insert_table: list_alerta\n        }\n      }\n    ];\n  } catch (err) {\n    return [{ json: { error: \"Erro ao fazer parse do JSON\", detalhe: err.message, resultado: not_insert } }];\n  }\n} else {\n  return [{ json: { resultado: not_insert } }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1800,
+        1080
+      ],
+      "id": "11839350-3c16-467a-bf8c-41902f73de97",
+      "name": "Code13"
+    },
+    {
+      "parameters": {
+        "command": "=sh /home/node/scripts/executa_remoto_params.sh administrador@172.16.128.133 /home/administrador/projetos/dados-agent-ia/script_process_monitoria/shell_script/run_workflow_n8n_consulta_particularity.sh \"Alerta\" \"{{ $json.alerta }}\" \"\" \"\" \"\" \"\""
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        920,
+        1240
+      ],
+      "id": "4066dd5f-d771-4dfb-a579-d5ebabded224",
+      "name": "Execute Command7"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Code6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute Command2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute Command1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute Command3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute Command4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute Command5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute Command6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute Command7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command4": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Code4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code4": {
+      "main": [
+        [
+          {
+            "node": "Code9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code5": {
+      "main": [
+        []
+      ]
+    },
+    "Code6": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "Code7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code7": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields5": {
+      "main": [
+        [
+          {
+            "node": "Code10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code10": {
+      "main": [
+        [
+          {
+            "node": "Code8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code8": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code9": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command5": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields6": {
+      "main": [
+        [
+          {
+            "node": "Code11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code11": {
+      "main": [
+        [
+          {
+            "node": "Code12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code12": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command6": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields7": {
+      "main": [
+        [
+          {
+            "node": "Code13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code13": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command7": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e68264bb-47c0-4bff-bdc3-c50484b54e50",
+  "meta": {
+    "instanceId": "8b8ea8a20c268fa29d9fd66b8c29cadad97cd9e65381a2d182b1cdf938823164"
+  },
+  "id": "cLgVnl0qzxYiWU6W",
+  "tags": []
+}

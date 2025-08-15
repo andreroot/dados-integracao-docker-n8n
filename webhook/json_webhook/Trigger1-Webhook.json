@@ -1,0 +1,19 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "http://localhost:5678/webhook/enviar-whatsapp",
+        "jsonParameters": true,
+        "options": {},
+        "bodyParametersJson": "{\n  \"chatId\": \"5511999999999\",\n  \"mensagem\": \"Mensagem disparada automaticamente pelo Fluxo A\"\n}"
+      },
+      "id": "HttpRequest",
+      "name": "Chamar Fluxo WAHA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [300, 300]
+    }
+  ],
+  "connections": {}
+}
