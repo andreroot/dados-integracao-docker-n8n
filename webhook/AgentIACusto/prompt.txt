@@ -1,0 +1,10 @@
+Usuario perguntou: {{ $json.message.protocolMessage.editedMessage.extendedTextMessage.text }} 
+
+Ao receber a pergunta
+Primeiro, pesquisar o utlimo nome na memoria, senão encontrar, perguntar o nome. 
+
+extraia o item da pergunta.
+
+Acessa o tools usando como parametro: {"item": "item do custo"} 
+
+Responda em formato de texto com emotions

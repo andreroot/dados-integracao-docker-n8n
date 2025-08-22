@@ -7,7 +7,7 @@ provider "aws" {
   default_tags {
     tags = {
       Environment     = "staging"
-      Name = "pipeline-receita-ec2"
+      Name = "my-ec2"
     }
   }
 

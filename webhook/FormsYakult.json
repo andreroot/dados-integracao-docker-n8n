@@ -1,0 +1,268 @@
+{
+  "name": "FormsYakult",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "=default",
+        "chatId": "=5511946552467@c.us",
+        "text": "=Dora, {{ $json.mensagemFormatada }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        768,
+        16
+      ],
+      "id": "33d42622-2c86-480a-b208-4064214c7ab5",
+      "name": "Send a text message",
+      "credentials": {
+        "wahaApi": {
+          "id": "hOWkRULfZW34spD8",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "controle_venda",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "nome"
+            },
+            {
+              "fieldLabel": "end"
+            },
+            {
+              "fieldLabel": "produto"
+            },
+            {
+              "fieldLabel": "qtde"
+            },
+            {
+              "fieldLabel": "valor"
+            },
+            {
+              "fieldLabel": "data_pgto"
+            }
+          ]
+        },
+        "options": {
+          "path": "fluxo_venda_yakult"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -560,
+        -32
+      ],
+      "id": "deb30bd2-4565-4497-8b29-467ccbb376ae",
+      "name": "On form submission",
+      "webhookId": "862270fb-0de4-4d5a-b985-10324fabfb25"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "10aJaXvNUKsviF3ocdIREpSe1OAmjfDO1pCpE8w8azNw",
+          "mode": "list",
+          "cachedResultName": "LANCAMENTO NOTAS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10aJaXvNUKsviF3ocdIREpSe1OAmjfDO1pCpE8w8azNw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 654589084,
+          "mode": "list",
+          "cachedResultName": "vendas_yakult",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10aJaXvNUKsviF3ocdIREpSe1OAmjfDO1pCpE8w8azNw/edit#gid=654589084"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nome": "={{ $json.nome }}",
+            "end": "={{ $json.end }}",
+            "produto": "={{ $json.produto }}",
+            "qtde": "={{ $json.qtde }}",
+            "valor": "={{ $json.valor }}",
+            "data_pgto": "={{ $json.data_pgto }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "end",
+              "displayName": "end",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "produto",
+              "displayName": "produto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "qtde",
+              "displayName": "qtde",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "valor",
+              "displayName": "valor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "data_pgto",
+              "displayName": "data_pgto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        304,
+        16
+      ],
+      "id": "43244f11-da02-444a-85fc-369d610f7f06",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hfeCM85G9DVdZB31",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst venda = $input.first();\n\nconst resumo = `*nome:${venda.json.nome},data_pagto:${venda.json.data_pgto},valor:${venda.json.valor}`;\n\nconst mensagem = `📝 *Dados inseridos com sucesso*\ndados validados:\n${resumo}\n`;\n\nreturn [\n  {\n    json: {\n      mensagemFormatada: mensagem\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        16
+      ],
+      "id": "c07601d3-d235-4262-bed7-93026989a9b1",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "url": "http://n8n:5678/webhook/fluxo_venda_yakult_v0",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "operacao",
+              "value": "insert_venda"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"chatId\": \"5511946552467@c.us\",\n  \"mensagem\": \"Agent, Inserir dados de venda\",\n  \"venda\": {\n    \"nome\": \"{{ $json.nome }}\",\n    \"end\": \"{{ $json.end }}\",\n    \"data_pagto\": \"{{ $json.data_pgto }}\",\n    \"produto\": \"{{ $json.produto }}\",\n    \"valor_venda\": \"{{ $json.valor }}\",\n    \"qtde_venda\": \"{{ $json.qtde }}\",\n\"data_insert\": \"{{ $json.submittedAt }}\"\n  }\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -176,
+        -32
+      ],
+      "id": "6ce10b20-6914-4969-920d-1d47a27d796d",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        []
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3317e5b1-5ba4-4b41-9416-da4aceb68764",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "634db2e956f7005a832bb0a507ea2e537da18f8559b33f8f14989448258bdb2b"
+  },
+  "id": "Sgqxibm0JDCHHmqd",
+  "tags": []
+}

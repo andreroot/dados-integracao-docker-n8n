@@ -1,0 +1,785 @@
+{
+  "name": "WorkFlowCusto",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "/meu_custo",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -544,
+        192
+      ],
+      "id": "8aa8936f-a70d-49e5-b050-994235947e7d",
+      "name": "Webhook",
+      "webhookId": "906da2c0-4138-4cba-aa49-632756f1a575"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.mensagemFormatada }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1408,
+        320
+      ],
+      "id": "0cca2061-8e4d-41ad-aa98-7eeaf31431bb",
+      "name": "Respond to Webhook",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1728,
+        816
+      ],
+      "id": "96b3ca11-ae31-4846-94a7-2a29a6d38da0",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        832
+      ],
+      "id": "9ea66480-603d-4b3c-8736-e029c96879a9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "933c844c-c8db-483c-9d39-a26f8c400883",
+              "name": "",
+              "value": "={{ $json}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1728,
+        336
+      ],
+      "id": "8491afee-0e89-42b8-a8cd-0ab120ffe7e6",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const dados_yakult = $input.all();\n\nconst yakult_resumo = dados_yakult\n  .map((item, index) => `${index + 1}. ${item.json.dia} - ${item.json.Lucro}`)\n  .join('\\n');\n\nreturn [{\n  json: {\n    mensagemFormatada: yakult_resumo\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1488,
+        640
+      ],
+      "id": "3b67bf45-a5d3-4081-8a97-7cabbf8d3637",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e231ceef-2131-4178-9120-029ed7363f06",
+              "name": "query.consulta",
+              "value": "={{ $json.query.consulta }}",
+              "type": "string"
+            },
+            {
+              "id": "12807575-5002-45a8-afe2-6ae5d641e5b8",
+              "name": "query.mes",
+              "value": "={{ $json.query.mes }}",
+              "type": "string"
+            },
+            {
+              "id": "44e6961d-8834-43a8-86a1-f49b7c2e0708",
+              "name": "query.tipo_custo",
+              "value": "={{ $json.query.tipo_custo }}",
+              "type": "string"
+            },
+            {
+              "id": "b3b9344e-635e-46ae-8ca6-b28de42ab39a",
+              "name": "query.periodo",
+              "value": "={{ $json.query.periodo }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -288,
+        192
+      ],
+      "id": "a2eab37b-6b27-48ae-be93-581372776847",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.query.consulta }}",
+                    "rightValue": "custo_detalhe",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "a21f536c-dcaa-4ad5-bdc2-18bd2daef12a"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "352ac0a4-8e79-40fd-9e29-609ac21919f4",
+                    "leftValue": "={{ $json.query.consulta }}",
+                    "rightValue": "custo_prioridade",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2a4226eb-89a0-40d8-a266-ce0c68bab781",
+                    "leftValue": "={{ $json.query.consulta }}",
+                    "rightValue": "custo_rotina",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f85488d5-d09a-472c-ac5d-9998d3673916",
+                    "leftValue": "={{ $json.query.consulta }}",
+                    "rightValue": "custo_variado",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0571aac5-edc3-47c4-bcae-41740b262a7d",
+                    "leftValue": "={{ $json.query.consulta }}",
+                    "rightValue": "previsao_financeira",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -96,
+        224
+      ],
+      "id": "ec8b40b6-863f-4204-8d99-b1edfec3c1d6",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "value": "devsamelo2",
+          "mode": "list",
+          "cachedResultName": "devsamelo2",
+          "cachedResultUrl": "https://console.cloud.google.com/bigquery?project=devsamelo2"
+        },
+        "sqlQuery": "SELECT concat('{{ $json.query.tipo }}: ',sum(valor_custo)) AS vlr_custo \n  FROM `devsamelo2.dev_domestico.custo_2025_excel` where dt_mes_base = '2025-03-01' and tipo_custo_alt in ('alimentacao')",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleBigQuery",
+      "typeVersion": 2.1,
+      "position": [
+        1712,
+        496
+      ],
+      "id": "188ec7bb-63e1-48bf-8b18-51b1268709f6",
+      "name": "Google BigQuery",
+      "credentials": {
+        "googleBigQueryOAuth2Api": {
+          "id": "baCprjUvYNyXBCNg",
+          "name": "Google BigQuery account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2e012d39-3cf1-4d37-bea6-6dcfdd0be5e2",
+              "name": "tipo",
+              "value": "={{ $json.tipo }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1744,
+        176
+      ],
+      "id": "5d1742c8-4126-4489-9048-cac1a082af61",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst custo = $input.all();\nconst mes = $('Edit Fields').first().json.query.mes\n\n\nlet resumo = '';\nlet label = '';\n\nif (mes === \"janeiro\") {\n  resumo = custo.map((item, index) => `${index + 1}. *${item.json.tipo}*\\n\\n${item.json.vlr_fev}`).join('\\n\\n');\n  label = 'JAN';\n} else if (mes === \"fevereiro\") {\n  resumo = custo.map((item, index) => `${index + 1}. *${item.json.tipo}*\\n\\n${item.json.vlr_jan}`).join('\\n\\n');\n  label = 'FEV';\n} else if (mes === \"março\") {\n  resumo = custo.map((item, index) => `${index + 1}. *${item.json.tipo}*\\n\\n${item.json.vlr_jan}`).join('\\n\\n');\n  label = 'MAR';\n} else if (mes === \"abril\") {\n  resumo = custo.map((item, index) => `${index + 1}. *${item.json.tipo}*\\n\\n${item.json.vlr_jan}`).join('\\n\\n');\n  label = 'ABR';\n} else if (mes === \"maio\") {\n  resumo = custo.map((item, index) => `${index + 1}. *${item.json.tipo}*\\n\\n${item.json.vlr_jan}`).join('\\n\\n');\n  label = 'MAI';\n} else if (mes === \"junho\") {\n  resumo = custo.map((item, index) => `${index + 1}. *${item.json.tipo}*\\n\\n${item.json.vlr_jan}`).join('\\n\\n');\n  label = 'JUN';        \n} else if (mes === \"julho\") {\n  resumo = custo.map((item, index) => `${index + 1}. *${item.json.tipo}*\\n\\n${item.json.vlr_jul}`).join('\\n\\n');\n  label = 'JUL';\n} else if (mes === \"agosto\") {\n  resumo = custo.map((item, index) => `${index + 1}. *${item.json.tipo}*\\n\\n${item.json.vlr_jul}`).join('\\n\\n');\n  label = 'AGO';\n} else if (mes === \"setembro\") {\n  resumo = custo.map((item, index) => `${index + 1}. *${item.json.tipo}*\\n\\n${item.json.vlr_jul}`).join('\\n\\n');\n  label = 'SET';\n} else if (mes === \"outubro\") {\n  resumo = custo.map((item, index) => `${index + 1}. *${item.json.tipo}*\\n\\n${item.json.vlr_jul}`).join('\\n\\n');\n  label = 'OUT';\n} else if (mes === \"novembro\") {\n  resumo = custo.map((item, index) => `${index + 1}. *${item.json.tipo}*\\n\\n${item.json.vlr_nov}`).join('\\n\\n');\n  label = 'NOV';\n} else if (mes === \"dezembro\") {\n  resumo = custo.map((item, index) => `${index + 1}. *${item.json.tipo}*\\n\\n${item.json.vlr_dez}`).join('\\n\\n');\n  label = 'DEZ';\n} else {\n  resumo = 'Mês não reconhecido.';\n  label = mes.toUpperCase();\n}\n\nconst mensagem = `📝 *Custo mensal*\n\n[${label}] Resumo dos custos:\n${resumo}\n\n\nconsulta finalizada\n`;\n\nreturn [\n  {\n    json: {\n      mensagemFormatada: mensagem\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1712,
+        656
+      ],
+      "id": "9c242cce-891d-4b49-9528-4479fca84f84",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst custo = $input.all();\n\nconst resumo = custo.map((item, index) => \n  `${index + 1}. *${item.json.tipo}* \n  \\n Mês Janeiro:${item.json.vlr_jan}\n  \\n Mês Fevereiro:${item.json.vlr_fev}\n  \\n Mês Março:${item.json.vlr_mar}\n  \\n Mês Abril:${item.json.vlr_abr}\n  \\n Mês Maio:${item.json.vlr_mai}\n  \\n Mês Junho:${item.json.vlr_jun}\n  \\n Mês Julho:${item.json.vlr_jul}\n  \\n Mês Agosto:${item.json.vlr_ago}\n  \\n Mês Setembro:${item.json.vlr_set}\n  \\n Mês Outubro:${item.json.vlr_out}\n  \\n Mês Novembro:${item.json.vlr_nov}\n  \\n Mês Dezembro:${item.json.vlr_dez}`\n                        ).join('\\n\\n');\n\nconst mensagem = `💥*Custo mensal Prioridades*\n\n🐾Resumo dos meses do ano 2025:\n${resumo}\n\n\nconsulta finalizada🙉\n`;\n\n\nreturn [\n  {\n    json: {\n      mensagemFormatada: mensagem\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        768,
+        272
+      ],
+      "id": "c82665c1-1392-442c-b000-2040ba4b2498",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1by76kJeADccF_ZIZnTSZcGd8TPJUYMo_zg021re5RLA",
+          "mode": "list",
+          "cachedResultName": "tipo_custo_n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1by76kJeADccF_ZIZnTSZcGd8TPJUYMo_zg021re5RLA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1814881268,
+          "mode": "list",
+          "cachedResultName": "custo_detalhe_itens",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1by76kJeADccF_ZIZnTSZcGd8TPJUYMo_zg021re5RLA/edit#gid=1814881268"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "tipo_custo_alt",
+              "lookupValue": "={{ $json.query.tipo_custo }}"
+            },
+            {
+              "lookupColumn": "dt_mes_base",
+              "lookupValue": "={{ $json.query.periodo }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        304,
+        48
+      ],
+      "id": "fc6f5400-87c9-4373-8157-315ed4e3c66a",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hfeCM85G9DVdZB31",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1by76kJeADccF_ZIZnTSZcGd8TPJUYMo_zg021re5RLA",
+          "mode": "list",
+          "cachedResultName": "tipo_custo_n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1by76kJeADccF_ZIZnTSZcGd8TPJUYMo_zg021re5RLA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 127210318,
+          "mode": "list",
+          "cachedResultName": "custo_mensal_prioridade",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1by76kJeADccF_ZIZnTSZcGd8TPJUYMo_zg021re5RLA/edit#gid=127210318"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        304,
+        240
+      ],
+      "id": "2425f913-a3aa-4297-8a91-28e6ffeca361",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hfeCM85G9DVdZB31",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1by76kJeADccF_ZIZnTSZcGd8TPJUYMo_zg021re5RLA",
+          "mode": "list",
+          "cachedResultName": "tipo_custo_n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1by76kJeADccF_ZIZnTSZcGd8TPJUYMo_zg021re5RLA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1574316159,
+          "mode": "list",
+          "cachedResultName": "custo_mensal_rotina",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1by76kJeADccF_ZIZnTSZcGd8TPJUYMo_zg021re5RLA/edit#gid=1574316159"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        304,
+        464
+      ],
+      "id": "9d178d4e-0778-4a8d-a1b3-4a1048d67c12",
+      "name": "Get row(s) in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hfeCM85G9DVdZB31",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1by76kJeADccF_ZIZnTSZcGd8TPJUYMo_zg021re5RLA",
+          "mode": "list",
+          "cachedResultName": "tipo_custo_n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1by76kJeADccF_ZIZnTSZcGd8TPJUYMo_zg021re5RLA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 703007738,
+          "mode": "list",
+          "cachedResultName": "custo_mensal_variado",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1by76kJeADccF_ZIZnTSZcGd8TPJUYMo_zg021re5RLA/edit#gid=703007738"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        352,
+        656
+      ],
+      "id": "73548625-f6c8-47a6-8b19-be862ecec61f",
+      "name": "Get row(s) in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hfeCM85G9DVdZB31",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst custo = $input.all();\n\nconst resumo = custo.map((item, index) => \n  `${index + 1}. *${item.json.tipo}* \n  \\n Mês Janeiro:${item.json.vlr_jan}\n  \\n Mês Fevereiro:${item.json.vlr_fev}\n  \\n Mês Março:${item.json.vlr_mar}\n  \\n Mês Abril:${item.json.vlr_abr}\n  \\n Mês Maio:${item.json.vlr_mai}\n  \\n Mês Junho:${item.json.vlr_jun}\n  \\n Mês Julho:${item.json.vlr_jul}\n  \\n Mês Agosto:${item.json.vlr_ago}\n  \\n Mês Setembro:${item.json.vlr_set}\n  \\n Mês Outubro:${item.json.vlr_out}\n  \\n Mês Novembro:${item.json.vlr_nov}\n  \\n Mês Dezembro:${item.json.vlr_dez}`\n                        ).join('\\n\\n');\n\n\nconst mensagem = `💥*Custo mensal Variado*\n\n🐾Resumo dos meses do ano 2025:\n${resumo}\n\n\nconsulta finalizada🙉\n`;\n\nreturn [\n  {\n    json: {\n      mensagemFormatada: mensagem\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        768,
+        608
+      ],
+      "id": "d5df7ae9-b5c8-4ce6-91c8-cf71c64cdfff",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst custo = $input.all();\n\nconst resumo = custo.map((item, index) => \n  `${index + 1}. *${item.json.tipo}* \n  \\n Mês Janeiro:${item.json.vlr_jan}\n  \\n Mês Fevereiro:${item.json.vlr_fev}\n  \\n Mês Março:${item.json.vlr_mar}\n  \\n Mês Abril:${item.json.vlr_abr}\n  \\n Mês Maio:${item.json.vlr_mai}\n  \\n Mês Junho:${item.json.vlr_jun}\n  \\n Mês Julho:${item.json.vlr_jul}\n  \\n Mês Agosto:${item.json.vlr_ago}\n  \\n Mês Setembro:${item.json.vlr_set}\n  \\n Mês Outubro:${item.json.vlr_out}\n  \\n Mês Novembro:${item.json.vlr_nov}\n  \\n Mês Dezembro:${item.json.vlr_dez}`\n                        ).join('\\n\\n');\n\n\nconst mensagem = `💥*Custo mensal Rotina*\n\n🐾Resumo dos meses do ano 2025:\n${resumo}\n\n\nconsulta finalizada🙉\n`;\n\n\nreturn [\n  {\n    json: {\n      mensagemFormatada: mensagem\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        768,
+        448
+      ],
+      "id": "ccc1de30-5347-468b-806b-bca9c7d1368b",
+      "name": "Code4"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst custo = $input.all();\n\nconst cabtipocusto = `*Mes Referencia: ${custo[0].json.tipo_custo_alt}*`;\nconst cabdtcusto = `*Mes Referencia: ${custo[0].json.dt_custo}*`;\n\nconst resumo = custo.map((item, index) => \n  `*detalhes: ${index + 1}. descrição: ${item.json.tipo_custo} / dia: ${item.json.dt_custo} / valor: R$ ${item.json.valor_custo}`).join('\\n\\n');\n\nconst mensagem = `💥*Custo detalhe - Item: ${cabtipocusto} e Periodo: ${cabdtcusto}*\n\n\n🐾Detalhes:\n${resumo}\n\n\nconsulta finalizada🙉\n`;\n\n\nreturn [\n  {\n    json: {\n      mensagemFormatada: mensagem\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        48
+      ],
+      "id": "665df2c0-e8e2-4384-89c4-57cd5ab9da9d",
+      "name": "Code5"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1by76kJeADccF_ZIZnTSZcGd8TPJUYMo_zg021re5RLA",
+          "mode": "list",
+          "cachedResultName": "tipo_custo_n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1by76kJeADccF_ZIZnTSZcGd8TPJUYMo_zg021re5RLA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1194138400,
+          "mode": "list",
+          "cachedResultName": "previsao_plano_financeiro",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1by76kJeADccF_ZIZnTSZcGd8TPJUYMo_zg021re5RLA/edit#gid=1194138400"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        384,
+        880
+      ],
+      "id": "857d1490-83b3-491d-8609-c68cffd8d51d",
+      "name": "Get row(s) in sheet4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hfeCM85G9DVdZB31",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst custo = $input.all();\n\n//const cabtipocusto = `*Mes Referencia: ${custo[0].json.tipo_custo_alt}*`;\n//const cabdtcusto = `*Mes Referencia: ${custo[0].json.dt_custo}*`;\n\nconst resumo = custo.map((item, index) => \n  `*periodo: ${item.json.dt_mes_base} - analise: ${item.json.analise} / saldo prev: R$ ${item.json.saldo_fake} `).join('\\n\\n');\n\nconst mensagem = `💥*Previsão Financeira*\n\n\n🐾Plano:\n${resumo}\n\n\nconsulta finalizada🙉\n`;\n\n\nreturn [\n  {\n    json: {\n      mensagemFormatada: mensagem\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        816
+      ],
+      "id": "a2d9f9b1-e11e-4acb-ab77-933c2d115bde",
+      "name": "Code6"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        []
+      ]
+    },
+    "Code1": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google BigQuery": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        []
+      ]
+    },
+    "Code": {
+      "main": [
+        []
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Code4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code4": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code5": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet4": {
+      "main": [
+        [
+          {
+            "node": "Code6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code6": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0baca516-730c-4da4-b77c-303c57e139a8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "634db2e956f7005a832bb0a507ea2e537da18f8559b33f8f14989448258bdb2b"
+  },
+  "id": "3TqcgK2F6bCnG97X",
+  "tags": []
+}

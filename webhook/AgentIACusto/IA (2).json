@@ -1,0 +1,1434 @@
+{
+  "name": "IA",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "andrejagan@gmail.com",
+          "mode": "list",
+          "cachedResultName": "andrejagan@gmail.com"
+        },
+        "returnAll": true,
+        "options": {
+          "timeMin": "={{ $fromAI('after', 'The earliest datetime we want to look for events for') }}",
+          "timeMax": "={{ $fromAI('before', 'The latest datetime we want to look for events for') }}",
+          "singleEvents": true,
+          "query": "={{ $fromAI('query', 'The search query to look for in the calendar. Leave empty if no search query is needed') }}"
+        }
+      },
+      "id": "7efc51a1-86e4-46d1-9846-43c5db684122",
+      "name": "Google Calendar",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.2,
+      "position": [
+        3408,
+        176
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "3dG7GLUH5DCAIiC3",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "62b480fc-1127-4cb2-be67-2e833e5e4267",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        3408,
+        368
+      ],
+      "webhookId": "a889d2ae-2159-402f-b326-5f61e90f602e"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Usuario perguntou: {{ $json.message.protocolMessage.editedMessage.extendedTextMessage.text }} \n\nAo receber a pergunta sobre custo\nPrimeiro, pesquisar o utlimo nome na memoria, senão encontrar, perguntar o nome. \n\nmenu\n1.custo mensal dos itens\n2.custo mensal prioridade\n3.custo mensal rotina\n4.custo mensal variado\n\nao escolher opção 1, solicitar um item de custo para realizar a pesquisa do item\n\nextraia o item de custo da pergunta.\n\nAcessa o tools usando como parametro: {\"item\": \"item do custo\"} \n\nResponda em formato de texto com emotions\n\n",
+        "options": {
+          "systemMessage": "Sou um agente especialista financeiro de gastos pessoais, tenho acesso aos custos prioridades, custos rotinas, custos variados e custos detalhados com descrição dos itens, data de custo e valor do custo via API usando as tools, com essas informações faço analises dos seus gasto, consulta via api usando as tools, o plano finaneiro estrategico de 2025 e monta uma estrategia, e recomendo ações para controle financeiro pessoal para evitar um gasto total maior que 5mil reais. \n\nUse um tom amigável e envolvente, fazendo com que a conversa pareça pessoal e acessível.\n\nEvite gerar informações fictícias, a menos que explicitamente solicitado.\nUsar tools para construir as respostas sobre os processos automatizados executados com sucesso e com erro.\n\n\n"
+        }
+      },
+      "id": "2b741ff5-8e8c-45fe-a252-a99e6e8c1f97",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1872,
+        -448
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 👋 Welcome to n8n!\nThis example shows how to build an AI Agent that interacts with your \ncalendar.\n\n### 1. Connect your accounts\n- Claim your `free` 0 OpenAI calls in the `OpenAI model` node \n- Connect your Google account in the `Google Calendar` node credentials section\n\n### 2. Ready to test it?\nClick Chat below and start asking questions! For example you can try `What meetings do I have today?`",
+        "height": 389,
+        "width": 319,
+        "color": 6
+      },
+      "id": "bc361435-84ea-45a0-bc64-33856af0a1ce",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -896,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\n\n\n\n\n\n\n\n\n\n\n\nDon't have **Google Calendar**? Simply exchange this with the **Microsoft Outlook** or other tools",
+        "height": 253,
+        "width": 226,
+        "color": 7
+      },
+      "id": "f2b4adcb-9213-4082-9ad7-743ee0357c6b",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        32,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "98d571bd-7d33-48cd-82d5-f15950c64c88",
+      "name": "OpenAI Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1776,
+        -176
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "EKNdZLMWLfvxm6Ok",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.key.id }}"
+      },
+      "id": "82538064-8cd9-42eb-8be3-4d14c6d66fd0",
+      "name": "Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        3536,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### Want to learn more?\nWant to learn more about AI and how to apply it best in n8n? Have a look at our [new tutorial series on YouTube](https://www.youtube.com/watch?v=yzvLfHb0nqE&lc).",
+        "height": 100,
+        "width": 317,
+        "color": 6
+      },
+      "id": "7abc8718-1d53-4750-ab6a-88fcf9d8663b",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -896,
+        720
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "@devlikeapro/n8n-nodes-waha.wahaTrigger",
+      "typeVersion": 202502,
+      "position": [
+        -544,
+        -400
+      ],
+      "id": "2749b6bc-2fc3-4cc9-b03c-1a6eba09c370",
+      "name": "WAHA Trigger",
+      "webhookId": "c0edae36-810e-4653-a869-388867d03d56"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.payload.from }}",
+                    "rightValue": "5511940147165@c.us",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "7f36f460-5062-4753-ba35-c9db8e4e0486"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ec8552de-638b-4342-b198-19aebfed890d",
+                    "leftValue": "={{ $json.payload.from }}",
+                    "rightValue": "5511954941526@c.us",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "aa2eee13-0a13-44e0-b107-f952add53523",
+                    "leftValue": "={{ $json.payload.from }}",
+                    "rightValue": "5511946552467@c.us",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "909fa23c-387e-4b66-b9a6-ef73ec73fe7a",
+                    "leftValue": "={{ $json.payload.from }}",
+                    "rightValue": "5511988691534@c.us",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        3120,
+        -208
+      ],
+      "id": "4a1983e1-2e54-4cef-b38c-951c16c95d99",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        3056,
+        176
+      ],
+      "id": "a4a78a6a-cbed-4344-a60c-71c4b6a07af3",
+      "name": "WAHA1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "054081cf-6f12-4e87-8100-0c0a199298a3",
+              "name": "payload.body",
+              "value": "={{ $json.payload.payload.body }}",
+              "type": "string"
+            },
+            {
+              "id": "6c252f10-df65-4c00-9c78-ea644e20952f",
+              "name": "payload.from",
+              "value": "={{ $json.payload.payload.from }}",
+              "type": "string"
+            },
+            {
+              "id": "358c82d1-51f3-4b96-9df0-63f96bf4f96b",
+              "name": "session",
+              "value": "={{ $json.payload.session }}",
+              "type": "string"
+            },
+            {
+              "id": "00ca2cc4-305f-414c-954e-d8d06929e7d5",
+              "name": "payload.id",
+              "value": "={{ $json.payload.payload.id }}",
+              "type": "string"
+            },
+            {
+              "id": "33dfa92e-3e6a-46ed-ae5b-6a755063cd7e",
+              "name": "payload.timestamp",
+              "value": "={{ $json.payload.timestamp }}",
+              "type": "number"
+            },
+            {
+              "id": "91899aee-6f30-4b7f-a38b-730ea3a332db",
+              "name": "id",
+              "value": "={{ $json.payload.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1264,
+        -464
+      ],
+      "id": "f70684ac-c419-4067-9c4a-83f609ca786c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        3072,
+        400
+      ],
+      "id": "8aef254f-0b2d-4bf4-8a9b-7126c7ce74bb",
+      "name": "WAHA",
+      "credentials": {
+        "wahaApi": {
+          "id": "hOWkRULfZW34spD8",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "Chats",
+        "operation": "Edit Message",
+        "text": "={{ $json.payload.body }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        1504,
+        -512
+      ],
+      "id": "f891c697-e595-4699-9cf3-eaaa52e0472a",
+      "name": "WAHA2",
+      "credentials": {
+        "wahaApi": {
+          "id": "hOWkRULfZW34spD8",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f3bd5b02-8c4b-42d8-8f93-d549ea6dae6d",
+              "leftValue": "={{ $json.grupo }}",
+              "rightValue": "custo",
+              "operator": {
+                "type": "array",
+                "operation": "contains",
+                "rightType": "any"
+              }
+            },
+            {
+              "id": "778179bd-45b3-4365-907b-362e26c47f15",
+              "leftValue": "={{ $json.validacao }}",
+              "rightValue": "=true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        896,
+        -432
+      ],
+      "id": "f9ae769a-430f-410a-879b-64a8555ab9ad",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst session = $input.all()\nconst nrotelefonezap = $('Edit Fields3').first().json.payload.from\n//const valorProcurado2 = \"9768134fa4cc47369e1b1b842a2ad92x\";\n\n\n// Usando find para obter o objeto\nconst resultado1 = session\n  .filter(match => match.json.telefone === nrotelefonezap)\n .map((item, index) => `${item.json.nome}`)\n\n//const resultado2 = session.find(item => item.json.sessionId === //valorProcurado2);\n\n// Usando find para obter o objeto\nconst grupo = session\n  .filter(match => match.json.telefone === nrotelefonezap)\n .map((item, index) => `${item.json.grupo_usuario}`)\n\nif (resultado1) {\n  const payloadzap = $('Edit Fields3').first().json\n  return [{ json: { validacao: true, grupo: grupo, sessionid: resultado1, payload: payloadzap  } }];\n} else  {\n\n        const nome = 'Novo';\n        const payloadzap = $('Edit Fields3').first().json\n  return [{ json: { validacao:  true, grupo: null,  sessionid: nome, payload: payloadzap } }];\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        496,
+        -368
+      ],
+      "id": "9d95146e-3032-4d8e-ad66-1856b6da166d",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "path": "933c4d24-7d57-428e-a537-f1a79fe48902"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        1888,
+        -960
+      ],
+      "id": "fa11c293-a104-40da-9916-1ca29fc49eb3",
+      "name": "MCP Server Trigger",
+      "webhookId": "933c4d24-7d57-428e-a537-f1a79fe48902"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Dados da yakult da vendadore Dora",
+        "url": "http://localhost:5678/webhook/meu_custo?consulta=yakult",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        3424,
+        -272
+      ],
+      "id": "ca29e3c1-7744-459c-a6f1-d0631d099eee",
+      "name": "Consulta dados de venda da Yakult da Dora"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Listagem dos custos e valores dos itens de custo, são os custos da prioridade mensal dos custos gerais do ano 2025",
+        "url": "http://n8n:5678/webhook/meu_custo?consulta=custo_prioridade",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1632,
+        -688
+      ],
+      "id": "4ce503c5-de3e-4268-94e3-08aded220837",
+      "name": "consulta custo mensal prioridade"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Listagem dos custos e valores dos itens de custo, são os custos da rotina mensal dos custos gerais do ano 2025",
+        "url": "http://n8n:5678/webhook/meu_custo?consulta=custo_rotina",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        2144,
+        -672
+      ],
+      "id": "c4d97cf5-1600-4b72-adc6-7725e5829562",
+      "name": "consulta custos mensal rotina"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Listagem dos custos e valores dos itens de custo, são os custos variados mensal dos custos gerais do ano 2025",
+        "url": "http://n8n:5678/webhook/meu_custo?consulta=custo_variado",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        2560,
+        -768
+      ],
+      "id": "45fd6ba2-ba4b-4931-a001-9feb3d3052a0",
+      "name": "consulta custo mensal variado"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        2176,
+        -176
+      ],
+      "id": "5bcae8fa-5d7a-4275-94f8-9b889d3644ec",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "sseEndpoint": "http://localhost:5678/mcp/933c4d24-7d57-428e-a537-f1a79fe48902/sse",
+        "include": "selected"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        2320,
+        -192
+      ],
+      "id": "0dbc4c53-5d19-4f37-821e-920234afedb9",
+      "name": "MCP Client"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Listagem dos custos de um tipo de item com informações de descrição do custos, data do custos e valor do custos do ano 2025",
+        "url": "http://n8n:5678/webhook/meu_custo?consulta=custo_detalhe&tipo_cuto=feira&periodo=2025-07-01",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        3408,
+        -496
+      ],
+      "id": "e6792216-dd1e-49ff-83da-5d7cf2e2c841",
+      "name": "Consulta detalhes custos feira"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Consulta plano financeiro do ano 2025",
+        "url": "http://localhost:5678/webhook/meu_custo?consulta=previsao_financeira",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        2352,
+        -720
+      ],
+      "id": "ae135a4b-783e-4523-bcc0-c895619d777b",
+      "name": "Plano financeiro 2025"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Listagem dos custos e valores dos itens de custo, são os custos da rotina mensal dos custos gerais do ano 2025",
+        "url": "=http://n8n:5678/webhook/meu_custo?consulta=custo_detalhe&periodo=2025-07-01",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "tipo_custo",
+              "value": "={{ $fromAI('item', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1872,
+        -672
+      ],
+      "id": "74be61e4-c05c-4367-a7bb-19ddacfd0df3",
+      "name": "custos detalhes custo dos itens"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Usuario perguntou: {{ $json.message.protocolMessage.editedMessage.extendedTextMessage.text }} \n\nAo receber a pergunta\nPrimeiro, pesquisar o utlimo nome na memoria, senão encontrar, perguntar o nome. \n\ndetalhes da venda de Yakult, extrair data da venda. \n\n\nRetornar com as respostas geradas pela tools via api e \nsempre responder começando com emotion com cara de cachorro, \nemotions com sinal vermelho para quando houver palavra nf, \nemotions com sinal verde para quando houver palavra vendae e a palavra lucro\n",
+        "options": {
+          "systemMessage": "Sou um agente especialista  de vendas de produto yakult e afins, \ntenho acesso as vendas diarias e  detalhados com data da venda, valor da nf, \nvalor da venda, valor do lucro preço do produto via API usando as tools, \ncom essas informações faço analises , \nconsulta via api usando as tools, informo total de vendas no mes. \n\nPesquiso no site da Yakult os preços dos produtos da Yakult\n\nUse um tom amigável e envolvente, fazendo com que a conversa pareça pessoal e acessível.\n\nEvite gerar informações fictícias, a menos que explicitamente solicitado.\nUsar tools para construir as respostas sobre os processos automatizados executados com sucesso e com erro.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        1872,
+        0
+      ],
+      "id": "1b9a2423-c887-47b1-93ec-b47675395f54",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1760,
+        256
+      ],
+      "id": "d51eccaf-e0c5-48a9-bedd-d929bda8818f",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "EKNdZLMWLfvxm6Ok",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.key.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        3488,
+        624
+      ],
+      "id": "9d37638f-9f64-4350-864d-19be40877ee9",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "path": "yakult"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        -976
+      ],
+      "id": "8fde4d57-5999-4b62-bf7b-8898cdf745d7",
+      "name": "MCP Server Trigger1",
+      "webhookId": "d28e27d0-3292-4c1e-9ab5-eb8203be1b81"
+    },
+    {
+      "parameters": {
+        "sseEndpoint": "http://localhost:5678/mcp/yakult"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        2256,
+        272
+      ],
+      "id": "da667f84-a854-4110-b726-d9444c298ab6",
+      "name": "MCP Client1"
+    },
+    {
+      "parameters": {
+        "toolDescription": "vendas yakult",
+        "url": "http://n8n:5678/webhook/fluxo_venda_yakult_v0?operacao=consulta_venda",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1264,
+        -736
+      ],
+      "id": "eed87008-0767-49ad-a582-f2178b9e9dc5",
+      "name": "Consulta de vendas yakult"
+    },
+    {
+      "parameters": {
+        "jsCode": "const texto = $input.first().json.payload.body || \"\";\n\nconst palavrasChave = [\"agent\",\"braw\"];\nconst textoLower = texto.toLowerCase();\n\nconst contemTrecho = palavrasChave.some(palavra => textoLower.includes(palavra));\n//console.log(`Texto contém trecho: ${contemTrecho}`);\nreturn [\n  {\n    json: {\n      validado: contemTrecho,\n      mensagem_original: texto\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3248,
+        640
+      ],
+      "id": "03f9608e-ac43-4d11-a384-390da7d98f9c",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8ecae5e6-e086-4cc1-a188-6dbdf0495b8e",
+              "name": "mensagem_original",
+              "value": "={{ $json.mensagem_original }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3232,
+        864
+      ],
+      "id": "c9b079cc-fed2-40ac-aa63-0d9ba03e1643",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "resource": "Chats",
+        "operation": "Edit Message",
+        "text": "={{ $json.payload.body }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        1488,
+        -80
+      ],
+      "id": "70f0d6d9-ab97-49dd-957a-c8c03113bd5c",
+      "name": "WAHA4",
+      "credentials": {
+        "wahaApi": {
+          "id": "hOWkRULfZW34spD8",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "054081cf-6f12-4e87-8100-0c0a199298a3",
+              "name": "payload.body",
+              "value": "={{ $('Switch').item.json.payload.body }}",
+              "type": "string"
+            },
+            {
+              "id": "6c252f10-df65-4c00-9c78-ea644e20952f",
+              "name": "payload.from",
+              "value": "={{ $('Switch').item.json.payload.from }}",
+              "type": "string"
+            },
+            {
+              "id": "358c82d1-51f3-4b96-9df0-63f96bf4f96b",
+              "name": "session",
+              "value": "={{ $('Switch').item.json.session }}",
+              "type": "string"
+            },
+            {
+              "id": "00ca2cc4-305f-414c-954e-d8d06929e7d5",
+              "name": "payload.id",
+              "value": "={{ $('Switch').item.json.payload.id }}",
+              "type": "string"
+            },
+            {
+              "id": "33dfa92e-3e6a-46ed-ae5b-6a755063cd7e",
+              "name": "payload.timestamp",
+              "value": "={{ $('Switch').item.json.payload.timestamp }}",
+              "type": "number"
+            },
+            {
+              "id": "91899aee-6f30-4b7f-a38b-730ea3a332db",
+              "name": "id",
+              "value": "={{ $('Switch').item.json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3008,
+        656
+      ],
+      "id": "e982917a-6442-4e7f-b8b9-a9a80d6a60df",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('If').item.json.sessionid[0] }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
+      "typeVersion": 1.5,
+      "position": [
+        2000,
+        -176
+      ],
+      "id": "358dbecc-6038-4689-baf6-7c9ae375755f",
+      "name": "Redis Chat Memory",
+      "credentials": {
+        "redis": {
+          "id": "hK8J5nsoc8nAunxc",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('If').item.json.sessionid[0] }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
+      "typeVersion": 1.5,
+      "position": [
+        2000,
+        272
+      ],
+      "id": "0e157c30-e99a-4058-99e6-0e6c2d6c7f6c",
+      "name": "Redis Chat Memory1",
+      "credentials": {
+        "redis": {
+          "id": "hK8J5nsoc8nAunxc",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1fDrn1zTpY4EgZmVi2GS5mwPUwOTXhMofEdegW25INvs",
+          "mode": "list",
+          "cachedResultName": "gerenciamento-user-n8n-pessoal",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fDrn1zTpY4EgZmVi2GS5mwPUwOTXhMofEdegW25INvs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "user",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fDrn1zTpY4EgZmVi2GS5mwPUwOTXhMofEdegW25INvs/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        208,
+        -368
+      ],
+      "id": "e1b6fd0a-54a2-4b01-ae4b-b98bddcc8a35",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hfeCM85G9DVdZB31",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8bd692d0-a48b-4398-bb50-f1dfb4d0f199",
+              "name": "payload.from",
+              "value": "={{ $('WAHA Trigger').item.json.payload.from }}",
+              "type": "string"
+            },
+            {
+              "id": "4fb300ae-fc5c-47c3-ac21-c8338d48ac73",
+              "name": "payload.id",
+              "value": "={{ $('WAHA Trigger').item.json.payload.id }}",
+              "type": "string"
+            },
+            {
+              "id": "e6d2ad41-5c02-4c53-9c8b-f7c6a6b92b1c",
+              "name": "session",
+              "value": "={{ $('WAHA Trigger').item.json.session }}",
+              "type": "string"
+            },
+            {
+              "id": "61022822-663b-4e2f-acb3-5d3d53a98854",
+              "name": "payload.body",
+              "value": "={{ $('WAHA Trigger').item.json.payload.body }}",
+              "type": "string"
+            },
+            {
+              "id": "c362869d-fbca-4553-ba5c-5d9ae044bb6f",
+              "name": "timestamp",
+              "value": "={{ $json.timestamp }}",
+              "type": "number"
+            },
+            {
+              "id": "c985f598-5d39-4203-bbee-378f382a04be",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -112,
+        -352
+      ],
+      "id": "e0927da0-ed7b-43ad-a9f5-94f9ef3d2542",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f3bd5b02-8c4b-42d8-8f93-d549ea6dae6d",
+              "leftValue": "={{ $json.grupo }}",
+              "rightValue": "yakult",
+              "operator": {
+                "type": "array",
+                "operation": "contains",
+                "rightType": "any"
+              }
+            },
+            {
+              "id": "778179bd-45b3-4365-907b-362e26c47f15",
+              "leftValue": "={{ $json.validacao }}",
+              "rightValue": "=true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        912,
+        -128
+      ],
+      "id": "67a8edb7-fdc6-48f0-b3b1-380ae077bc7b",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "={{ $('Edit Fields').item.json.session }}",
+        "chatId": "={{ $('Edit Fields').item.json.payload.from }}",
+        "text": "={{ $json.output }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        2704,
+        -416
+      ],
+      "id": "af6c40b6-b79e-437b-b0ab-c357518cec16",
+      "name": "Send a text message",
+      "credentials": {
+        "wahaApi": {
+          "id": "hOWkRULfZW34spD8",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "={{ $('Edit Fields').item.json.session }}",
+        "chatId": "={{ $('Edit Fields').item.json.payload.from }}",
+        "text": "={{ $json.output }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        2768,
+        -32
+      ],
+      "id": "a3a6e8db-c067-461f-9366-87e861cc0e44",
+      "name": "Send a text message1",
+      "credentials": {
+        "wahaApi": {
+          "id": "hOWkRULfZW34spD8",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "054081cf-6f12-4e87-8100-0c0a199298a3",
+              "name": "payload.body",
+              "value": "={{ $json.payload.payload.body }}",
+              "type": "string"
+            },
+            {
+              "id": "6c252f10-df65-4c00-9c78-ea644e20952f",
+              "name": "payload.from",
+              "value": "={{ $json.payload.payload.from }}",
+              "type": "string"
+            },
+            {
+              "id": "358c82d1-51f3-4b96-9df0-63f96bf4f96b",
+              "name": "session",
+              "value": "={{ $json.payload.session }}",
+              "type": "string"
+            },
+            {
+              "id": "00ca2cc4-305f-414c-954e-d8d06929e7d5",
+              "name": "payload.id",
+              "value": "={{ $json.payload.payload.id }}",
+              "type": "string"
+            },
+            {
+              "id": "33dfa92e-3e6a-46ed-ae5b-6a755063cd7e",
+              "name": "payload.timestamp",
+              "value": "={{ $json.payload.timestamp }}",
+              "type": "number"
+            },
+            {
+              "id": "91899aee-6f30-4b7f-a38b-730ea3a332db",
+              "name": "id",
+              "value": "={{ $json.payload.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1232,
+        -128
+      ],
+      "id": "83d14802-f6de-4d7f-8da6-c37e317e0b5f",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        2128,
+        304
+      ],
+      "id": "d35707dc-cfad-4736-afca-2e942d77da0a",
+      "name": "Think1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Calendar": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "OpenAI Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory": {
+      "ai_memory": [
+        []
+      ]
+    },
+    "Switch": {
+      "main": [
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WAHA Trigger": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "WAHA2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WAHA2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consulta dados de venda da Yakult da Dora": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "consulta custo mensal prioridade": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consulta custos mensal rotina": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consulta custo mensal variado": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consulta detalhes custos feira": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Plano financeiro 2025": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "custos detalhes custo dos itens": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        []
+      ]
+    },
+    "MCP Client1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consulta de vendas yakult": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        []
+      ]
+    },
+    "WAHA4": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        []
+      ]
+    },
+    "Redis Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis Chat Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "WAHA4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "00188c43-c699-4003-862a-99be9b18e048",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "634db2e956f7005a832bb0a507ea2e537da18f8559b33f8f14989448258bdb2b"
+  },
+  "id": "8aZKqoE5GahBKsYF",
+  "tags": []
+}

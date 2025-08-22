@@ -1,0 +1,681 @@
+{
+  "name": "WorkFlowYakultv0",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "fluxo_venda_yakult_v0",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -544,
+        192
+      ],
+      "id": "40529788-02e1-4967-8085-7db84bbda505",
+      "name": "Webhook",
+      "webhookId": "c26f8f2d-ef47-4cc2-aefe-3dd8c2e33924"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.mensagemFormatada }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        0
+      ],
+      "id": "8e9f0bcb-6d5d-4647-b4be-a714e7298827",
+      "name": "Respond to Webhook",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const dados_yakult = $input.all();\n\n// Data de 7 dias atrás\nconst seteDiasAtras = new Date();\nseteDiasAtras.setDate(seteDiasAtras.getDate() + 15);\n\nfunction formatarDataParaBR(data) {\n  const dia = String(data.getDate()).padStart(2, '0');\n  const mes = String(data.getMonth() + 1).padStart(2, '0');\n  const ano = data.getFullYear();\n  return `${dia}-${mes}-${ano}`;\n}\n// Função para converter 'dd-mm-yyyy' para Date\nfunction parseDataBR(dataStr) {\n  const [dia, mes, ano] = dataStr.split('-');\n  return new Date(`${ano}-${mes}-${dia}`);\n}\n\nconst dataFormatada = formatarDataParaBR(seteDiasAtras);\n//console.log(dataFormatada); // ex: \"23-07-2025\"\n\nlet total_nf = 0;\nlet total_recebido = 0;\nlet total_lucro = 0;\n\n\nconst yakult_resumo = dados_yakult\n  .filter(item => {\n    const dataNota = parseDataBR(item.json.dia);\n    return dataNota <= parseDataBR(dataFormatada);\n  })\n  .map((item) => {\n    const valor_nf = parseFloat(item.json.valor_nf) || 0;\n    const valor_recebido = parseFloat(item.json.valor_recebido) || 0;\n    const valor_saldo_lucro = parseFloat(item.json.valor_saldo_lucro) || 0;\n    \n    total_nf += valor_nf;\n    total_recebido += valor_recebido;\n    total_lucro += valor_saldo_lucro;\n\n    return `📅 Dia: ${item.json.dia}\\n\n    🧾 Valor NF: R$ ${valor_nf.toFixed(2)}\\n\n    💰 Valor Recebido: R$ ${valor_recebido.toFixed(2)}\\n\n    🙏 Valor Lucro: R$ ${valor_saldo_lucro.toFixed(2)}\\n`;\n  })\n  .join('\\n');\n\nconst totalizador = `\\n📊 Totalizando periodo solicitado \nde 29-07-2025 ate ${dataFormatada} :\\n\n🧾 Valor da NF: R$ ${total_nf.toFixed(2)}\\n\n💰 Valor a receber: R$ ${total_recebido.toFixed(2)}\\n\n🙏 Lucro preço venda do produtos recebidos: R$ ${total_lucro.toFixed(2)}`;\n\nreturn [{\n  json: {\n    mensagemFormatada: yakult_resumo + totalizador\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        48
+      ],
+      "id": "dbc65815-fad2-48e2-8656-c42ce83798b7",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e231ceef-2131-4178-9120-029ed7363f06",
+              "name": "query.operacao",
+              "value": "={{ $json.query.operacao }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -288,
+        192
+      ],
+      "id": "b7273a03-2d57-4081-96da-b90556aaee25",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.query.operacao }}",
+                    "rightValue": "consulta_venda",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "a21f536c-dcaa-4ad5-bdc2-18bd2daef12a"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "352ac0a4-8e79-40fd-9e29-609ac21919f4",
+                    "leftValue": "={{ $json.query.operacao }}",
+                    "rightValue": "insert_venda",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -16,
+        192
+      ],
+      "id": "dde9c441-6de7-4e24-ae86-74985709cd6c",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "10aJaXvNUKsviF3ocdIREpSe1OAmjfDO1pCpE8w8azNw",
+          "mode": "list",
+          "cachedResultName": "LANCAMENTO NOTAS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10aJaXvNUKsviF3ocdIREpSe1OAmjfDO1pCpE8w8azNw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 654589084,
+          "mode": "list",
+          "cachedResultName": "vendas_yakult",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10aJaXvNUKsviF3ocdIREpSe1OAmjfDO1pCpE8w8azNw/edit#gid=654589084"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nome": "={{ $('Webhook').item.json.body.venda.nome }}",
+            "end": "={{ $('Webhook').item.json.body.venda.end }}",
+            "produto": "={{ $('Webhook').item.json.body.venda.produto }}",
+            "qtde": "={{ $('Webhook').item.json.body.venda.qtde_venda }}",
+            "valor": "={{ $('Webhook').item.json.body.venda.valor_venda }}",
+            "data_pgto": "={{ $('Webhook').item.json.body.venda.data_pagto }}",
+            "data_insert": "={{ $('Webhook').item.json.body.venda.data_insert }}",
+            "dia": "1",
+            "mes": "1"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "end",
+              "displayName": "end",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "produto",
+              "displayName": "produto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "qtde",
+              "displayName": "qtde",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "valor",
+              "displayName": "valor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "data_pgto",
+              "displayName": "data_pgto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "data_insert",
+              "displayName": "data_insert",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "dia",
+              "displayName": "dia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "mes",
+              "displayName": "mes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1088,
+        544
+      ],
+      "id": "2a0b96d5-0052-4b40-a508-2be22965b577",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hfeCM85G9DVdZB31",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst venda = $input.all();\n\nconst resumo = venda.map((item, index) => \n  `${index + 1}. *nome:${item.json.nome},data_pagto:${item.json.data_pgto},valor:${item.json.valor}*`).join('\\n\\n');\n\nconst mensagem = `📝 *Dados inseridos com sucesso*\ndados validados:\n${resumo}\n`;\n\nreturn [\n  {\n    json: {\n      mensagemFormatada: mensagem\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        224
+      ],
+      "id": "2f36b769-38f9-4f38-9c55-e5f74bc0d6ff",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "jsCode": "const texto = $('Webhook').first().json.body.mensagem || \"\";\n\nconst palavrasChave = [\"agent\", \"Inserir dados de venda\"];\nconst textoLower = texto.toLowerCase();\n\nconst contemTrecho = palavrasChave.some(palavra => textoLower.includes(palavra));\n//console.log(`Texto contém trecho: ${contemTrecho}`);\nreturn [\n  {\n    json: {\n      validado: contemTrecho,\n      mensagem_original: texto\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        176,
+        384
+      ],
+      "id": "53ce2727-82e1-488c-ac5d-fbb01300ed70",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "91c0d25a-33f4-4aaa-9700-f7e1828277ad",
+              "leftValue": "={{ $json.validado }}",
+              "rightValue": "True",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        368,
+        400
+      ],
+      "id": "cb188834-dec4-4bc4-95c4-7c6b127abe86",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "=default",
+        "chatId": "=5511946552467@c.us",
+        "text": "=Dora, {{ $json.mensagemFormatada }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        1568,
+        320
+      ],
+      "id": "0dfa7efc-1404-476f-a6fd-6e77a6178c4a",
+      "name": "Send a text message",
+      "credentials": {
+        "wahaApi": {
+          "id": "hOWkRULfZW34spD8",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1c-VZpYJI637S01_-DndKkj-f3SNfEg7ankTwWMcBxGI",
+          "mode": "list",
+          "cachedResultName": "agosto-Yakult",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1c-VZpYJI637S01_-DndKkj-f3SNfEg7ankTwWMcBxGI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 394067030,
+          "mode": "list",
+          "cachedResultName": "resumo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1c-VZpYJI637S01_-DndKkj-f3SNfEg7ankTwWMcBxGI/edit#gid=394067030"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        352,
+        64
+      ],
+      "id": "28b394f9-e900-4a38-8839-2659212982ca",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hfeCM85G9DVdZB31",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.mensagemFormatada }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1216,
+        240
+      ],
+      "id": "0b45f516-4af9-4b54-b2e3-4d35df22031a",
+      "name": "Respond to Webhook1",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1c-VZpYJI637S01_-DndKkj-f3SNfEg7ankTwWMcBxGI",
+          "mode": "list",
+          "cachedResultName": "agosto-Yakult",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1c-VZpYJI637S01_-DndKkj-f3SNfEg7ankTwWMcBxGI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1370176181,
+          "mode": "list",
+          "cachedResultName": "controle_vendas_clientes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1c-VZpYJI637S01_-DndKkj-f3SNfEg7ankTwWMcBxGI/edit#gid=1370176181"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nome": "={{ $('Webhook').item.json.body.venda.nome }}",
+            "end": "={{ $('Webhook').item.json.body.venda.end }}",
+            "produto": "={{ $('Webhook').item.json.body.venda.produto }}",
+            "qtde": "={{ $('Webhook').item.json.body.venda.qtde_venda }}",
+            "valor": "={{ $('Webhook').item.json.body.venda.valor_venda }}",
+            "data_pgto": "={{ $('Webhook').item.json.body.venda.data_pagto }}",
+            "data_insert": "={{ $('Webhook').item.json.body.venda.data_insert }}",
+            "dia": "1",
+            "mes": "8"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "end",
+              "displayName": "end",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "produto",
+              "displayName": "produto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "qtde",
+              "displayName": "qtde",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "valor",
+              "displayName": "valor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "data_pgto",
+              "displayName": "data_pgto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "data_insert",
+              "displayName": "data_insert",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "dia",
+              "displayName": "dia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "mes",
+              "displayName": "mes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        688,
+        352
+      ],
+      "id": "59cee894-fea7-4510-a369-4fb011f5ddb0",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hfeCM85G9DVdZB31",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7f9f3925-3c20-44cc-91cb-8282d96ef83f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "634db2e956f7005a832bb0a507ea2e537da18f8559b33f8f14989448258bdb2b"
+  },
+  "id": "qVqACpc33GDNknab",
+  "tags": []
+}

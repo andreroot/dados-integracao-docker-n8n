@@ -1,10 +1,10 @@
 
-data "aws_iam_policy" "this" {
-  name = "GetSecrets"
-}
+# data "aws_iam_policy" "this" {
+#   name = "GetSecrets"
+# }
 
-resource "aws_iam_role" "ec2_receita_execution_role" {
-  name = "ec2-receita-role"
+resource "aws_iam_role" "my_ec2_execution_role" {
+  name = "my-ec2-role"
 
   assume_role_policy = <<EOF
 {
@@ -30,7 +30,7 @@ data "aws_iam_policy" "management_group_policy" {
 
 # politica para log stream no cloudwatch
 resource "aws_iam_role_policy_attachment" "ec2_execution_role_policy" {
-  role       = aws_iam_role.ec2_receita_execution_role.name
+  role       = aws_iam_role.my_ec2_execution_role.name
   for_each = data.aws_iam_policy.management_group_policy
   policy_arn = each.value.arn 
 }
