@@ -1,5 +1,5 @@
 #!/bin/bash
-export NGROK_AUTHTOKEN=2vls36KLZYno3gHbaO7yr82hTl6_6TBmA8hFU3bsPK79gAupy
+
 # install and configure docker on the ec2 instance
 sudo yum update -y
 
@@ -9,6 +9,7 @@ sudo amazon-linux-extras install docker -y
 sudo service docker start
 sudo systemctl enable docker
 sudo yum install htop
+sudo yum install git -y
 
 
 # install docker-compose

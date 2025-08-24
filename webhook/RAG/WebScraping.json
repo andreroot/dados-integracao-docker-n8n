@@ -1,0 +1,161 @@
+{
+  "name": "WebScraping",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "cc9b2e8f-2231-4269-b0dd-3ebed0454f23",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "51412de9-0835-42f0-93e0-0b346bea2266",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "722144bd-9e96-4538-8300-094cfc47eb31",
+              "name": "url",
+              "value": "https://imw.com.br/imw-geral/",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "2ab157be-ad6f-41df-9f8e-bb3b52519e66",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "informacaoGeral",
+              "cssSelector": "<div class=\"elementor-widget-container\"> \t\t\t\t\t\t\t<p>Aos cinco dias do mês de janeiro de 1967, na cidade de Nova Friburgo, estado do Rio de Janeiro, foi fundada a Igreja Metodista Wesleyana, compondo-se inicialmente de ministros e leigos que cooperavam na Igreja Metodista do Brasil. </p><p>Os motivos que deram origem ao desligamento, por ocasião do 11º Concílio Regional da Igreja Metodista do Brasil, basearam-se na doutrina do batismo com o Espírito Santo, como uma segunda bênção para o crente, e na aceitação da obra pentecostal, incluindo os dons mencionados na Bíblia Sagrada: Sabedoria, Fé, Ciência, Dons de Curar, Operação de Maravilhas, Profecia, Discernimento, Línguas e Interpretação de Línguas, bem como os cânticos espirituais, as revelações e as visões.</p><p>Acrescentando-se ainda a realização da obra do avivamento espiritual, os cânticos de carinhos, as orações pelos enfermos e os cultos sem liturgia e protocolos. Às 14 horas da data acima mencionada, realizou-se a reunião que ficou conhecida como “Reunião da Ponte”, pelo fato de ter sido feita sobre uma ponte no pátio da Fundação Getúlio Vargas, sob a direção dos pastores Idelmício Cabral dos Santos e Waldemar Gomes de Figueiredo. Nessa ocasião, foi definitivamente fundada a Igreja Metodista Wesleyana, aceitando como forma de governo o centralizado com um Conselho-Geral, seguindo-se em linhas gerais o sistema metodista. Estavam presentes nessa reunião as seguintes pessoas: Idelmício Cabral dos Santos, Waldemar Gomes de Figueiredo, José Moreira da Silva, Francisco Teodoro Batista, Gessé Teixeira de Carvalho, Córo da Silva Pereira, José Mendes da Silva, Zeny da Silva Pereira, Dinah Batista Rubim, Ariosto Mendes, Wilson da Silva Mendes, Jacir Vieira e Antônio Faleiro Sobrinho.</p><p>Na ocasião, elegeu-se o primeiro Conselho-Geral, que ficou assim constituído: superintendente-geral: Waldemar Gomes de Figueiredo; secretário-geral: Gessé Teixeira de Carvalho; incluindo as três secretarias: Missões, Educação Cristã e Ação Social; e tesoureiro-geral: Idelmício Cabral dos Santos.</p><p>O movimento wesleyano começou a desenvolver-se gloriosamente, e convocou-se o Concílio Constituinte para se reunir na cidade de Petró­polis, dos dias 16 a 19 de fevereiro de 1967, ocasião em que foi organizada a Igreja. Novos obreiros juntaram-se às fileiras wesleyanas e vários evan-gelistas foram eleitos. Estava consolidada a obra do Senhor. Os estatutos da Igreja foram aprovados, e os membros do Conselho-Geral foram eleitos oficialmente: superintendente-geral: Waldemar Gomes de Figueiredo; secretário-geral de missões: Gessé Teixeira de Carvalho; secretário-geral de ação social: Oriele Soares do Nascimento; secretário-geral de finanças: Idelmício Cabral dos Santos; presidente da Junta Patrimonial da Igreja Metodista Wesleyana: Francisco Teodoro Batista; e redator do jornal Voz Wesleyana: Gessé Teixeira de Carvalho.</p><p>A relação dos membros do Concílio Constituinte que organizou a nova Igreja registra os seguintes nomes: Ailce Leni dos Santos, Alice Fonseca dos Santos, Antônio Faleiro Sobrinho, Azet Gerd, Clarice Alves Pacheco, Córo da Silva Pereira, Daniel Pedro de Paula, Derly Neves, Dílson Pereira Leal, Dinah Batista Rubim, Ezequiel Luiz da Costa, Francisco Teodoro Batista, Geraldo Vieira, Gessé Teixeira de Carvalho, Gessy dos Santos, Helenice Bastos, ldelmício Cabral dos Santos, Isaías da Silva Costa, Jair Magalhães, Jedidad Hilda da Costa, Jeremias Gomes de Araújo, João Coelho Duarte, Joaquim R. Penha, José Barreto de Macedo, José Gonçalves, José M. Galhardo, José Marques Pereira, José Mendes da Silva, José Moreira da Silva, José Tertuliano Pacheco, Letreci Teodoro, Nacir Neves da Costa, Nilson de&nbsp; Paula Carneiro, Octavio Faustino dos Santos, Onaldo Rodrigues Pereira, Oriele Soares do Nascimento, Pedro Moraes Filho, Sebastião Alves Moreira, Sebastião Moreira da Silva, Tobias Fernandes dos Santos, Waldemar Gomes de Figueiredo, Wilson R. Damasceno e Wilson Varjão. Outros irmãos estiveram presentes, mas não assinaram o livro contendo a ata de organização.</p><p>O Concílio Constituinte elegeu uma Comissão de Legislação composta dos seguintes membros: Waldemar Gomes de Figueiredo, Idelmício Cabral dos Santos, Gessé Teixeira de Carvalho, José Moreira da Silva, Francisco Teodoro Batista, João Coelho Duarte, Oriele Soares do Nascimento, José Mendes da Silva, Córo da Silva e Onaldo Rodrigues Pereira, aos quais delegou poderes para preparar o Manual da Igreja Metodista Wesleyana, publicado em 1968.</p>\t\t\t\t\t\t</div>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        624,
+        0
+      ],
+      "id": "8f9ed21e-0791-4a36-8f54-c38ce34b49eb",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "12c1Z704oGTpvI2yoRAi15P6VRCWgAaLQdU5QZSIJXK8",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.informacaoGeral }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        832,
+        0
+      ],
+      "id": "c6fb83d3-406c-4a62-95b2-8a5fa0c80459",
+      "name": "Update a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "Io2UdUh4ROQKS5aF",
+          "name": "Google Docs account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Update a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "47befeb7-3e4d-4555-b9c1-2e0a739cff04",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "634db2e956f7005a832bb0a507ea2e537da18f8559b33f8f14989448258bdb2b"
+  },
+  "id": "q22X0VF0kHx6pdvo",
+  "tags": []
+}

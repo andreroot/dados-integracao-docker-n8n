@@ -1,144 +1,83 @@
 # 📡 n8n Webhook
 
-Gerar fluxo que possam integrar mais nossos processos.
+Gerar fluxo que possam integrar processos.
 
-### 💡 1.Workflows | Fluxos
+### 1. Estrutura 🏢
 
-1. Fluxo | WorkFlowExecuteProc 👀
+    db-data: dados  do volumne de 
 
-    >integração com processos na maq remota via ssh
+    n8n_data
 
-    >criado um script shell para execução dos processos via ssh
+    scripts
 
-        sh /home/node/scripts/executa_remoto.sh
-        recebe parametros <user@localhost> <path do script shell>
+    webhook
+        /<nomes dos workfkows>
 
-    *conteudo da pasta*
+    terraform
+        /ec2
+        /resource
 
-        - json_webhook: josn dos fluxos que podem ser importados
-    
-        - javascript_code_n8n: script em js usando nos code dos fluxos
-    
-        - pasta scripts, nao versionar. Faça upload via ssh
+### 2. Deploy ✈️🐋
 
-    *teste*
+    - via terraform criar uma ambiente ec2 e criar estrutura do n8n com docker
 
-        curl -X POST http://172.16.128.133:5678/webhook/execute-python?processo=alertas_erros_operacionais' \
-        -H "Content-Type: application/json
+    ec2:
+        liberado 22, 5678
 
-2. Fluxo | Agent IA ⚡
+    acessar maq via ssh
+        ssh -i "credencial/my-ec2.pem" user@localhost
 
-    >integração com docker waha e um agent IA com openIa, que acessa o workflow WorkFlowExecuteProc e responde solicitações usando os retornos dos workflows
+    comandos:
+        docker-compose up --build -d
+        docker-compose up -d
 
-        necesário:subir pacote no N8N - @devlikeapro/n8n-nodes-waha
+### 3. Acessar console N8N ☂️
 
-3. Fluxo | TriggerErrosOperacionais 🔈
+    ip_public aws:5678/
 
-    >integração webhook com waha envio de msg no whatsapp, trigger acionada pelo alertas de portifolio(erros operacionais)
+    teste de fluxos:
 
-        necesário:subir pacote no N8N - @devlikeapro/n8n-nodes-waha
+        curl -X POST 'http://<ip public aws>:5678/webhook-test/fluxo_venda_yakult_v0?operacao=insert_venda' \
+        -H "Content-Type: application/json" \
+        -d '{"chatId": "5511946552467@c.us","mensagem": "Inserir nova vendas de yakult","venda":        {"nome":"Bruno", "end":"NSLoreto", "data_pagto":"30/07/2025", "produto":"sucos","valor_venda":"142,00","qtde_venda":"5"}}'
 
-    *teste*
-
-        curl -X POST 'http://172.16.128.133:5678/webhook/trigger_erros_operacionais?processo=inconsistencia_resultado' \
+        curl -X POST 'http://<ip public aws>:5678/webhook/trigger_erros_operacionais?processo=inconsistencia_resultado' \
         -H "Content-Type: application/json" \
         -d '{"chatId": "nro_valido_celular@c.us","mensagem": "Agent, essas informações sobre portifolio"}'
 
-### 2.Administração | Dockers 🐳
 
-1. comandos docker: a estrutura dos docker esta baseada em docker compose
-
-    *docker-compose:*
-
-        - serviço: n8n
-        - bd: redis, postgres
-        - ngrok
-        - network: docker-n8n-waha
-        - volumes
-
-[baixar]
-
-    docker-compose down
-
-[subir]
-
-    docker-compose up -d 
-
-[update]
-
-    docker-compose up --build -d
-
-    docker-compose down --volumes --remove-orphans
-
-    docker-compose build --no-cache
-
-    docker-compose up -d
-
-2. definir acesso do user administrador na maq remota no projeto
-
-    ```sudo chmod 777 /home/administrador/projetos/n8n/dados-integracao-docker-n8n/n8n_data/```
-
-    ```sudo chown -R administrador:administrador /home/administrador/projetos/n8n/dados-integracao-docker-n8n/n8n_data/```
-
-    ```sudo chgrp administrador /home/administrador/projetos/n8n/dados-integracao-docker-n8n/n8n_data/```
-
-3. copia de arquivos para maq remota
-    
-    ```scp n8n_data/_data/* administrador@host:/home/administrador/projetos/n8n/dados-integracao-docker-n8n/n8n_data/_data```
-    
-4. permissoes para docker ler/escrever no volume n8n
-    
-    ```sudo chown -R 1000:1000 ./n8n_data```
-
-5. permissoes para docker ler/escrever nno volume postgres 
-    
-    ```sudo chown -R 999:999 ./db-data```
-
-### 3.Administração | Fluxos 🔔
-
-Como definir parametros de entrada para webhook
-
-1. Params
-
-    http://localhost:5678/webhook-test/39b27ed9-bf7f-4d15-b40c-d13b596b7196/recebe-params/:item/item
+### 4. Montar fluxos com IA 🧠 
 
 
-    http://localhost:5678/webhook-test/39b27ed9-bf7f-4d15-b40c-d13b596b7196/recebe-params/3/item
+### 5. Comunicação Waha para Whastapp 📞
 
-    *resultado:
+    install:
+    @devlikeapro/n8n-nodes-waha no console n8n
 
-        "params": 
-        {
-        "item":"3"
-        },
-
-2. Query
-
-    http://localhost:5678/webhook-test/execute-python
+    doc:
+    https://waha.devlike.pro/docs/integrations/n8n/
 
 
-    http://localhost:5678/webhook-test/execute-python?processo=curva
 
-    *resultado:
+comandos basicos:
 
-        "query": 
-        {
-            "processo": "curva"
-        },
+  terraform
 
-3. Body
+  * ec2
+  criar uma instancia com docker e usa a estrutura na pasta resource/
+  - terrform init
+  - ao alterar backend executar:
+  terraform init -reconfigure
+  - terraform plan
+  - terraform apply
+  - terraform workspace list / terraform workspace select staging
 
-    curl --location 'http://localhost:5678/webhook/ehub' \
-    --header 'Content-Type: application/json' \
-    --data '{"nome":"teste", "mensagem": "Teste vindo do n8n", "origem": "n8n"}'
 
-    resultado:
+  conecta:
+  - ssh -i "~/.ssh/my-ec2.pem" ec2-user@ec2-54-237-57-75.compute-1.amazonaws.com
 
-        "body":
-        {
-         "nome":"teste", "mensagem": "Teste vindo do n8n", "origem": "n8n"
-        }
+  copia
 
-docker run -it --rm \
-  -p 4040:4040 \
-  ngrok/ngrok http --authtoken 2vls36KLZYno3gHbaO7yr82hTl6_6TBmA8hFU3bsPK79gAupy 5678
+  - scp -i "~/.ssh/my-ec2.pem" -r /home/andre/projetos/waha-n8n/dados-integracao-docker-n8n/terraform/ec2/resource/docker-compose.yml  ec2-user@ec2-54-237-57-75.compute-1.amazonaws.com:/home/ec2-user/          
+  - scp -i "~/.ssh/my-ec2.pem" -r Dockerfile  ec2-user@ec2-54-237-57-75.compute-1.amazonaws.com:/home/ec2-user/    
+  - scp -i "~/.ssh/my-ec2.pem" -r deployment.sh  ec2-user@ec2-54-237-57-75.compute-1.amazonaws.com:/home/ec2-user/

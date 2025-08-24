@@ -1,4 +1,3 @@
-# version: '3.9'
 
 services:
   n8n-main:
@@ -85,7 +84,7 @@ services:
   ngrok:
     image: ngrok/ngrok
     container_name: ngrok
-    command: http --authtoken ${NGROK_AUTHTOKEN} n8n:5678
+    command: http --authtoken ${NGROK_AUTHTOKEN} n8n-main:5678
     ports:
       - "4040:4040"      
     environment:
@@ -117,10 +116,41 @@ services:
   #   ports:
   #     - 5000:5000
 
+
+  waha:
+    restart: always
+    # https://waha.devlike.pro/docs/how-to/engines/#docker-images
+    # https://portal.devlike.pro/docker-image
+    image: devlikeapro/waha
+    container_name: waha_n8n
+    # WAHA Core
+    # image: devlikeapro/waha:latest
+    networks:
+      - docker-n8n-waha
+
+    environment:
+      - WHATSAPP_DEFAULT_ENGINE=NOWEB
+      - WHATSAPP_HOOK_EVENTS=message,message.any
+      - WHATSAPP_HOOK_URL=http://n8n-main:5678/webhook/c0edae36-810e-4653-a869-388867d03d56/waha
+    # http://n8n:5678/webhook-test/c0edae36-810e-4653-a869-388867d03d56/waha
+    # ports:
+    #   - '127.0.0.1:3000:3000/tcp'
+    ports:
+         - "3000:3000"
+
+    volumes:
+      # Store sessions in the .sessions folder (comment it if you're using MongoDB)
+      - /home/ec2-user/waha/.sessions:/app/.sessions
+
+      # Save media files
+      # https://waha.devlike.pro/docs/how-to/storages/#save-media-files-between-the-container-restarts
+      - /home/ec2-user/waha/.media:/app/.media
+
 volumes:
   db-data:
   n8n-projeto:
   n8n-node:
+  waha-n8n:
 
 networks:
   docker-n8n-waha:
