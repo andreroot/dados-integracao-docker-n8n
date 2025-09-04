@@ -54,7 +54,7 @@ services:
       - DB_POSTGRESDB_DATABASE=n8n
       - DB_POSTGRESDB_USER=n8n
       - DB_POSTGRESDB_PASSWORD=n8n
-      - N8N_ENCRYPTION_KEY=18bc55b65fe8d715d4ea3d7911f6d461
+      - N8N_ENCRYPTION_KEY=chave-secreta-bem-grande
       - N8N_QUEUE_MODE=redis
       - QUEUE_BULL_REDIS_HOST=redis
       - EXECUTIONS_MODE=queue

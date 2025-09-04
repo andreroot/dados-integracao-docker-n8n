@@ -28,6 +28,8 @@ RUN useradd --create-home --shell /bin/bash node
 # Instala o node WAHA dentro do diretório custom
 WORKDIR /home/node/.n8n/custom
 
+# install @devlikeapro/n8n-nodes-waha
+
 RUN npm init -y && \
     npm install https://github.com/devlikeapro/n8n-nodes-waha.git
 

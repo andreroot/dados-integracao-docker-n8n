@@ -3,12 +3,9 @@
 n8n_data/*
 db-data/
 ngrok-config/*
+data-redis/*
 terraform/ec2/credencial/*
 terraform/ec2/vars.tf
 terraform/ec2/.terraform/*
-terraform/ec2/.terraform/providers/*
-terraform/ec2/terraform.tfstate
+terraform/ec2/.terraform/terraform.tfstate
 terraform/ec2/.terraform.lock.hcl
-terraform/ec2/.terraform/providers/registry.terraform.io/hashicorp/aws/6.9.0/linux_amd64/terraform-provider-aws_v6.9.0_x5
-terraform/ec2/.terraform/providers/registry.terraform.io/hashicorp/aws/6.10.0/linux_amd64/terraform-provider-aws_v6.10.0_x5
-#

@@ -62,6 +62,11 @@ data "local_file" "arquivo3" {
   filename = "${path.module}/resource/Dockerfile"
 }
 
+data "local_file" "arquivo4" {
+  filename = "${path.module}/resource/subir_disco_docker.sh"
+}
+
+
 # launch the ec2 instance
 resource "aws_instance" "my-ec2-instance" {
   ami                    = data.aws_ami.amazon_linux_2.id
@@ -93,15 +98,16 @@ resource "aws_instance" "my-ec2-instance" {
               ${data.local_file.arquivo3.content}
               EOF
 
+
+              # Cria arquivo4
+              cat <<'EOF' > /home/ec2-user/subir_disco_docker.sh
+              ${data.local_file.arquivo4.content}
+              EOF
+
+
               # Ajusta permissões
               chown ec2-user:ec2-user /home/ec2-user/deployment.sh
               chmod 777 /home/ec2-user/deployment.sh
-
-              # criar disco
-              mkfs -t ext4 /dev/xvdb
-              mkdir /mnt/ebs
-              mount /dev/xvdb /mnt/ebs
-              echo "/dev/xvdb /mnt/ebs ext4 defaults,nofail 0 2" >> /etc/fstab
 
               cd /home/ec2-user/
               ./deployment.sh
