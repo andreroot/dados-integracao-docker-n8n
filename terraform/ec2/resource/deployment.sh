@@ -1,6 +1,6 @@
 #!/bin/bash
-export NGROK_AUTHTOKEN=2vls36KLZYno3gHbaO7yr82hTl6_6TBmA8hFU3bsPK79gAupy
-export HASH_WORKER=echo -n "andrejagan@gmail.com" | md5sum | cut -d ' ' -f1
+set -e
+# visualiza info
 
 # install and configure docker on the ec2 instance
 sudo yum update -y
@@ -10,7 +10,8 @@ sudo yum install docker -y
 sudo amazon-linux-extras install docker -y
 sudo yum install htop -y
 sudo yum install git -y
-
+sudo yum groupinstall "Development Tools" -y
+sudo yum install -y gcc gcc-c++ make glibc libstdc++ libstdc++.so*
 
 # install docker-compose
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
@@ -22,26 +23,5 @@ sudo chown $USER /var/run/docker.sock
 
 sudo service docker start
 sudo systemctl enable docker
+sudo systemctl enable containerd
 
-# create directories
-mkdir /home/ec2-user/n8n_data
-
-sudo chown -R 1000:1000 /home/ec2-user/n8n_data
-
-# create directories
-mkdir /home/ec2-user/db-data
-
-sudo chown -R 999:999 /home/ec2-user/db-data
-
-# usuario ec2-user
-cd /home/ec2-user/
-
-# Ajusta permissões
-chown ec2-user:ec2-user /home/ec2-user/subir_disco_docker.sh
-chmod 777 /home/ec2-user/subir_disco_docker.sh
-
-# criar disco
-./subir_disco_docker.sh
-
-# subir docker
-docker-compose up -d

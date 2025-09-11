@@ -10,9 +10,14 @@ data "aws_ami" "amazon_linux_2" {
     values = ["amazon"]
   }
 
+  # filter {
+  #   name   = "name"
+  #   values = ["amzn2-ami-hvm*"]
+  # }
+  # update para image AL2023
   filter {
     name   = "name"
-    values = ["amzn2-ami-hvm*"]
+    values = ["al2023-ami-ecs-hvm*"]
   }
 }
 
@@ -66,6 +71,9 @@ data "local_file" "arquivo4" {
   filename = "${path.module}/resource/subir_disco_docker.sh"
 }
 
+data "local_file" "arquivo5" {
+  filename = "${path.module}/resource/deploy_service.sh"
+}
 
 # launch the ec2 instance
 resource "aws_instance" "my-ec2-instance" {
@@ -104,6 +112,10 @@ resource "aws_instance" "my-ec2-instance" {
               ${data.local_file.arquivo4.content}
               EOF
 
+              # Cria arquivo5
+              cat <<'EOF' > /home/ec2-user/deploy_service.sh
+              ${data.local_file.arquivo5.content}
+              EOF 
 
               # Ajusta permissões
               chown ec2-user:ec2-user /home/ec2-user/deployment.sh

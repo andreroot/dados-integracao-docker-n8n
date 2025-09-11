@@ -2,6 +2,7 @@
 set -e
 # visualiza info
 # lsblk -o NAME,MOUNTPOINT,SIZE,FSTYPE
+# execução com sudo su
 
 # Cria e monta o EBS extra (xvdb ou nvme1n1 dependendo do tipo da instância)
 DEVICE=/dev/xvdb
@@ -17,20 +18,19 @@ echo "UUID=$UUID /mnt/ebs ext4 defaults,nofail 0 2" >> /etc/fstab
 
 # Para o Docker antes de mover os dados
 systemctl enable docker
-systemctl stop docker
-systemctl stop containerd
-
+service docker stop
+service containerd stop
 
 # Cria pasta para o Docker no EBS
 mkdir -p /mnt/ebs/docker
 
-# Move dados existentes do Docker (se houver)
-rsync -aP /var/lib/docker/ /mnt/ebs/docker/ || true
-sudo rsync -aP /var/lib/containerd/ /mnt/ebs/docker/containerd/ || true
+# # Move dados existentes do Docker (se houver)
+# rsync -aP /var/lib/docker/ /mnt/ebs/docker/ || true
+# sudo rsync -aP /var/lib/containerd/ /mnt/ebs/docker/containerd/ || true
 
-# Remove dados antigos do Docker
-rm -rf /var/lib/docker 
-rm -rf /var/lib/containerd/ 
+# # Remove dados antigos do Docker
+# rm -rf /var/lib/docker 
+# rm -rf /var/lib/containerd/ 
 
 # Configura Docker para usar o EBS
 mkdir -p /etc/docker
@@ -51,5 +51,5 @@ chmod -R 711 /mnt/ebs/docker
 
 # Reinicia Docker
 systemctl daemon-reexec
-systemctl start docker
-systemctl start containerd
+service docker start
+service containerd start
