@@ -29,9 +29,8 @@ services:
       - QUEUE_BULL_REDIS_HOST=redis
       - N8N_SECURE_COOKIE=false
     volumes:
-      - /home/ec2-user/scripts:/home/node/scripts 
-      - /home/ec2-user/n8n_data/_data:/home/node/.n8n
-
+      - /mnt/ebs/scripts:/home/node/scripts 
+      - /mnt/ebs/n8n_data/_data:/home/node/.n8n
 
     networks:
       - docker-n8n-waha
@@ -72,7 +71,7 @@ services:
     ports:
       - "5432:5432"     
     volumes:
-      - /home/ec2-user/db-data:/var/lib/postgresql/data
+      - /mnt/ebs/db-data:/var/lib/postgresql/data
     networks:
       - docker-n8n-waha      
     environment:
@@ -90,7 +89,7 @@ services:
     environment:
       - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
     volumes:
-      - /home/ec2-user/ngrok-config/.config/ngrok:/home/ngrok/.config/ngrok
+      - /mnt/ebs/ngrok-config/.config/ngrok:/home/ngrok/.config/ngrok
     depends_on:
       - n8n-main
     networks:
@@ -105,7 +104,7 @@ services:
       - REDIS_PASSWORD=12345
       - REDIS_DISABLE_DEFAULT_USER=true
     volumes:
-      - /home/ec2-user/data/redis:/data        
+      - /mnt/ebs/redis:/data
     ports:
       - 6379:6379
     networks: 
@@ -140,11 +139,11 @@ services:
 
     volumes:
       # Store sessions in the .sessions folder (comment it if you're using MongoDB)
-      - /home/ec2-user/waha/.sessions:/app/.sessions
+      - /mnt/ebs/waha/.sessions:/app/.sessions
 
       # Save media files
       # https://waha.devlike.pro/docs/how-to/storages/#save-media-files-between-the-container-restarts
-      - /home/ec2-user/waha/.media:/app/.media
+      - /mnt/ebs/waha/.media:/app/.media
 
 volumes:
   db-data:

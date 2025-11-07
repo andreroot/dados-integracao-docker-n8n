@@ -82,4 +82,12 @@ comandos basicos:
     
     - scp -i "~/.ssh/my-ec2.pem" -r deployment.sh  ec2-user@ec2-54-237-57-75.compute-1.amazonaws.com:/home/ec2-user/
 
-    scp -i "~/.ssh/my-ec2.pem" -r subir_disco_docker.sh ec2-user@ec2-54-237-57-75.compute-1.amazonaws.com:/home/ec2-user/
+    - scp -i "~/.ssh/my-ec2.pem" -r subir_disco_docker.sh ec2-user@ec2-54-237-57-75.compute-1.amazonaws.com:/home/ec2-user/
+
+
+    * cd /home/andre/projetos/waha-n8n/dados-integracao-docker-n8n-2/
+    na instancia dar pemrissão na pasta para copiar novo script
+
+    sudo chown -R ec2-user:ec2-user scripts
+
+    - scp -i "~/.ssh/my-ec2.pem" -r scripts/execute_copy_aws_s3.sh ec2-user@ec2-54-237-57-75.compute-1.amazonaws.com:/home/ec2-user/scripts
