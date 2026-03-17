@@ -5,7 +5,6 @@ db-data/
 ngrok-config/*
 data-redis/*
 terraform/ec2/credencial/*
-terraform/ec2/vars.tf
 terraform/ec2/.terraform/*
 terraform/ec2/.terraform/terraform.tfstate
 terraform/ec2/.terraform.lock.hcl
