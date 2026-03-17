@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 # visualiza info
-export NGROK_AUTHTOKEN=2vls36KLZYno3gHbaO7yr82hTl6_6TBmA8hFU3bsPK79gAupy
-export HASH_WORKER=709cef8796be4aea9fe8eab886ffbb8c
+export NGROK_AUTHTOKEN=
+export HASH_WORKER=
 #echo $(uuidgen | tr -d '-')
 
 # create directories
