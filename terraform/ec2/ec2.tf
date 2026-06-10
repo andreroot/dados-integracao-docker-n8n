@@ -1,11 +1,6 @@
 
-# resource "aws_key_pair" "my_ec2_key" {
-#   key_name   = "my-ec2"
-#   public_key = file("/home/andre/.ssh/my-ec2.pub")
-# }
-
 # use data source to get a registered amazon linux 2 ami
-data "aws_ami" "amazon_linux_2" {
+data "aws_ami" "amazon_linux" {
   most_recent = true
   owners      = ["amazon"]
 
@@ -20,41 +15,6 @@ data "aws_ami" "amazon_linux_2" {
   }
 }
 
-# create security group for the ec2 instance
-resource "aws_security_group" "my-ec2-sg" {
-  name        = "my-ec2-sg"
-  description = "allow access on ports 80 and 22"
-  vpc_id      = aws_vpc.my_vpc.id
-
-  # ingress {
-  #   description = "http access"
-  #   from_port   = 80
-  #   to_port     = 80
-  #   protocol    = "tcp"
-  #   cidr_blocks = ["0.0.0.0/0"]
-  # }
-
-  ingress {
-    description = "ssh access"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-
-}
-
-output "ec2_tags" {
-  value = aws_security_group.my-ec2-sg.tags
-}
 
 # # Render a part using a `template_file`
 # data "template_file" "script" {
@@ -128,6 +88,9 @@ resource "aws_instance" "my-ec2-instance" {
 
   user_data = <<-EOT
               #!/bin/bash
+              set -ex
+              exec > >(tee /var/log/user_data.log|logger -t user-data -s 2>/dev/console) 2>&1
+
               # Cria arquivo1
               cat <<'EOF' > /home/ec2-user/deploy_service.sh
               ${data.local_file.arquivo1.content}
@@ -249,13 +212,13 @@ resource "aws_volume_attachment" "attachment" {
 #   value = aws_security_group.receita-sg.tags
 # }
 # 3) Elastic IP
-resource "aws_eip" "ec2_eip" {
+resource "aws_eip" "ec2_eip_n8n" {
   instance = aws_instance.my-ec2-instance.id
   domain   = "vpc"
 }
 
 output "public_ip" {
-  value = aws_eip.ec2_eip.public_ip
+  value = aws_eip.ec2_eip_n8n.public_ip
 }
 
 
