@@ -2,10 +2,11 @@
 services:
   n8n-main:
     container_name: n8n-main
-    # image: n8nio/n8n
-    build:
-      context: .
-      dockerfile: Dockerfile   
+    image: docker.n8n.io/n8nio/n8n
+    restart: always
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile   
     ports:
       - "5678:5678"
     environment:
@@ -29,8 +30,8 @@ services:
       - QUEUE_BULL_REDIS_HOST=redis
       - N8N_SECURE_COOKIE=false
     volumes:
-      - /mnt/ebs/scripts:/home/node/scripts 
-      - /mnt/ebs/n8n_data/_data:/home/node/.n8n
+      - /data/ebs/scripts:/home/node/scripts 
+      - /data/ebs/n8n_data/_data:/home/node/.n8n
 
     networks:
       - docker-n8n-waha
@@ -62,7 +63,6 @@ services:
     deploy:
       replicas: 2   # número de workers (pode aumentar para escalar)
 
-
   db:
     container_name: n8n-db
     # Use the official PostgreSQL image
@@ -71,7 +71,7 @@ services:
     ports:
       - "5432:5432"     
     volumes:
-      - /mnt/ebs/db-data:/var/lib/postgresql/data
+      - /data/ebs/db-data:/var/lib/postgresql/data
     networks:
       - docker-n8n-waha      
     environment:
@@ -89,12 +89,11 @@ services:
     environment:
       - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
     volumes:
-      - /mnt/ebs/ngrok-config/.config/ngrok:/home/ngrok/.config/ngrok
+      - /data/ebs/ngrok-config/.config/ngrok:/home/ngrok/.config/ngrok
     depends_on:
       - n8n-main
     networks:
       - docker-n8n-waha 
-
 
   redis:
     image: redis:latest
@@ -104,17 +103,11 @@ services:
       - REDIS_PASSWORD=12345
       - REDIS_DISABLE_DEFAULT_USER=true
     volumes:
-      - /mnt/ebs/redis:/data
+      - /data/ebs/redis:/data
     ports:
       - 6379:6379
     networks: 
       - docker-n8n-waha
-
-  # python-runner:
-  #   build: ./python-runner
-  #   ports:
-  #     - 5000:5000
-
 
   waha:
     restart: always
@@ -140,11 +133,11 @@ services:
 
     volumes:
       # Store sessions in the .sessions folder (comment it if you're using MongoDB)
-      - /mnt/ebs/waha/.sessions:/app/.sessions
+      - /data/ebs/waha/.sessions:/app/.sessions
 
       # Save media files
       # https://waha.devlike.pro/docs/how-to/storages/#save-media-files-between-the-container-restarts
-      - /mnt/ebs/waha/.media:/app/.media
+      - /data/ebs/waha/.media:/app/.media
 
 volumes:
   db-data:

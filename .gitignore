@@ -1,10 +1,8 @@
 # git rm -r --cached .
 .env
-n8n_data/*
-db-data/
-ngrok-config/*
-data-redis/*
 terraform/ec2/credencial/*
-terraform/ec2/.terraform/*
-terraform/ec2/.terraform/terraform.tfstate
-terraform/ec2/.terraform.lock.hcl
+terraform/ec2-n8n/credencial/*
+terraform/ec2-postgresql/credencial/*
+.terraform
+.terraform/terraform.tfstate
+.terraform.lock.hcl

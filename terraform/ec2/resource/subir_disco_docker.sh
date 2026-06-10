@@ -5,7 +5,7 @@ set -e
 # execução com sudo su
 
 # Cria e monta o EBS extra (xvdb ou nvme1n1 dependendo do tipo da instância)
-DEVICE=/dev/xvdb
+DEVICE=/dev/xvdb #/dev/xvdh
 sudo mkfs -t ext4 $DEVICE
 sudo mkdir -p /mnt/ebs
 sudo mount $DEVICE /mnt/ebs
